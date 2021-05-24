@@ -134,3 +134,4 @@ dmypy.json
 
 #Docker
 .Dockerfile.swp
+readme.md
