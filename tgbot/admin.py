@@ -8,6 +8,7 @@ from dtb.settings import DEBUG
 
 from tgbot.models import Location, Arcgis
 from tgbot.models import User, UserActionLog
+from tgbot.models import Portfolio, Stock, Transaction
 from tgbot.forms import BroadcastForm
 from tgbot.handlers import utils
 
@@ -66,3 +67,8 @@ class ArcgisAdmin(admin.ModelAdmin):
 @admin.register(UserActionLog)
 class UserActionLogAdmin(admin.ModelAdmin):
     list_display = ['user', 'action', 'created_at']
+
+
+# @admin.register(Portfolio)
+# class PositionAdmin(admin.ModelAdmin):
+#     list_display = ['user', 'total_portfolio_price']

@@ -12,7 +12,7 @@ whitenoise
 gunicorn
 uvicorn
 uvloop
-httptools
+# httptools
 
 # Databases
 psycopg2-binary
@@ -28,3 +28,8 @@ python-telegram-bot
 
 # monitoring
 # sentry-sdk
+
+#portfolio
+yfinance
+time
+datetime

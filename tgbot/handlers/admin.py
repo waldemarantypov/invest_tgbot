@@ -12,7 +12,7 @@ def admin(update, context):
     """ Show help info about all secret admins commands """
     u = User.get_user(update, context)
     if not u.is_admin:
-        return
+        return update.message.reply_text(static_text.not_admin_answer)
 
     return update.message.reply_text(static_text.secret_admin_commands)
     
