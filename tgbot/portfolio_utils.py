@@ -1,23 +1,5 @@
-import time
 from datetime import date
-
-# Raw Package
-import numpy as np
-import pandas as pd
-
-# Data Source
-import yfinance as yf
-
 from tgbot.handlers.static_text import to_invest_text, total_portfolio
-
-# Data Viz
-import plotly.graph_objs as go
-
-# print(yf.download(tickers='UBER', period='5d', interval='5m'))
-
-# msft = yf.Ticker("msft")
-# print(msft.info['regularMarketPrice'])
-
 import requests
 
 currency_dict = {}
