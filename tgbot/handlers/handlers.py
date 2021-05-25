@@ -1,6 +1,5 @@
 import datetime
 import telegram
-import time
 import yfinance as yf
 
 
@@ -76,9 +75,7 @@ def currency_button(update, context):
         currency = start_currency_euro_text
 
     User.get_user_and_updated_currency(update, context, currency=query.data)
-    # time.sleep(1)
     query.edit_message_text(text=start_currency_button_answer_button.format(currency=currency))
-    # time.sleep(2)
     context.bot.sendMessage(chat_id=update.effective_chat.id, text=start_trade_experience,
                             reply_markup=make_keyboard_for_start_trade_experience())
 
@@ -99,11 +96,8 @@ def trade_experience_button(update, context):
 
     User.get_user_and_updated_trade_experience(update, context, trade_experience=query.data)
     query.edit_message_text(text=trade_experience)
-    # time.sleep(2)
     context.bot.sendMessage(chat_id=update.effective_chat.id, text=start_trade_experience_recommendation_text)
-    # time.sleep(3)
     context.bot.sendMessage(chat_id=update.effective_chat.id, text=start_help_tune_portfolio_text)
-    # time.sleep(3)
     context.bot.sendMessage(chat_id=update.effective_chat.id, text=start_help_tune_portfolio_question_text,
                             reply_markup=make_keyboard_for_start_help())
 
@@ -119,9 +113,7 @@ def help_button(update, context):
 
     if query.data == 'Yes':
         query.edit_message_text(text=start_help_button_answer_yes_button)
-        # time.sleep(2)
         context.bot.sendMessage(chat_id=update.effective_chat.id, text=start_important_to_invest_text)
-        # time.sleep(3)
         context.bot.sendMessage(chat_id=update.effective_chat.id, text=start_write_portfolio_command_text)
 
         return MODIFY
@@ -327,7 +319,6 @@ def inline_modify_stock_check(update, context):
         return STOCK_SHARES
     else:
         context.bot.sendMessage(chat_id=update.effective_chat.id, text=modify_balance_stock_not_in_portfolio)
-        time.sleep(2)
         return balance_button(update, context)
 
 
@@ -339,7 +330,6 @@ def inline_modify_stock_shares(update, context):
     stock = context.user_data['stock_for_change']
     Stock.update_shares_of_stock(stock, shares)
     update.message.reply_text(modify_balance_stock_shares_success.format(stock=stock.symbol, shares=stock.shares))
-    #time.sleep(2)
     return STOCK_TOTAL_COSTS
 
 
@@ -352,7 +342,6 @@ def inline_modify_stock_total_costs(update, context):
     update.message.reply_text(modify_balance_stock_total_costs_success.format(stock=stock.symbol,
                                                                               total_costs=stock.total_costs,
                                                                               shares=stock.shares))
-    #time.sleep(2)
     if context.user_data['changing_status(new_stock_or_already_existed)'] == 'already_existed':
         return balance_button(update, context)
     elif context.user_data['changing_status(new_stock_or_already_existed)'] == 'new_stock':
@@ -379,7 +368,6 @@ Inline: wrong inline
 @handler_logging()
 def inline_wrong_ticket(update, context):
     context.bot.sendMessage(chat_id=update.effective_chat.id, text=modify_wrong_ticket)
-    time.sleep(2)
     return balance_button(update, context)
 
 
@@ -456,7 +444,6 @@ def inline_add_stock_check(update, context):
 @handler_logging()
 def inline_wrong_ticket_add_stock(update, context):
     context.bot.sendMessage(chat_id=update.effective_chat.id, text=add_wrong_ticket)
-    # time.sleep(2)
     return add_stock_button(update, context)
 
 
@@ -522,7 +509,6 @@ def inline_delete_stock_check(update, context):
         return EXACT_DELETE_STOCK
     else:
         context.bot.sendMessage(chat_id=update.effective_chat.id, text=modify_balance_stock_not_in_portfolio)
-        #time.sleep(2)
         return delete_stock_button(update, context)
 
 
@@ -549,7 +535,6 @@ def delete_stock_exact_button(update, context):
 @handler_logging()
 def inline_wrong_ticket_delete_stock(update, context):
     context.bot.sendMessage(chat_id=update.effective_chat.id, text=delete_wrong_ticket)
-    # time.sleep(2)
     return delete_stock_button(update, context)
 
 

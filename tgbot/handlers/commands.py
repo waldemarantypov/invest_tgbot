@@ -1,7 +1,6 @@
 import telegram
 import datetime
 import re
-import time
 
 from tgbot.handlers.keyboard_utils import keyboard_confirm_decline_broadcasting, make_keyboard_for_start_currency, \
     make_keyboard_for_start_trade_experience, make_keyboard_for_portfolio_net, make_keyboard_for_start_help

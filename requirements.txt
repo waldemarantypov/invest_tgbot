@@ -31,5 +31,4 @@ python-telegram-bot
 
 #portfolio
 yfinance
-time
 datetime
