@@ -121,13 +121,12 @@ def setup_dispatcher(dp):
     ))
 
     # location
-    dp.add_handler(CommandHandler("ask_location", location.ask_for_location))
-    dp.add_handler(MessageHandler(Filters.location, location.location_handler))
+    # dp.add_handler(CommandHandler("ask_location", location.ask_for_location))
+    # dp.add_handler(MessageHandler(Filters.location, location.location_handler))
 
     #buttons
 
     # dp.add_handler(CallbackQueryHandler(secret_level, pattern=f"^{SECRET_LEVEL_BUTTON}"))
-
     dp.add_handler(MessageHandler(Filters.regex(rf'^{broadcast_command} .*'), broadcast_command_with_message))
     dp.add_handler(CallbackQueryHandler(broadcast_decision_handler, pattern=f"^{CONFIRM_DECLINE_BROADCAST}"))
 
