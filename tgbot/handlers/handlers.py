@@ -28,7 +28,7 @@ from tgbot.handlers.commands import MODIFY, MODIFY_OPTIONS, TO_INVEST, BALANCE, 
     ADD_STOCK, DELETE_STOCK, EXACT_DELETE_STOCK
 
 from tgbot.models import User, Portfolio, Stock
-from tgbot.tasks import broadcast_message
+# from tgbot.tasks import broadcast_message
 from tgbot.utils import extract_user_data_from_update
 from django.utils import timezone
 from telegram.ext import (
@@ -305,8 +305,9 @@ def inline_modify_stock_check(update, context):
     u = User.get_user(update, context)
     p = Portfolio.get_or_create_by_user(u)
     list_of_stock_symbols = Stock.list_of_stock_symbols_in_portfolio(p)
-    context.bot.edit_message_text(text=change_balance_text_stock_write, chat_id=update.effective_chat.id,
-                                  message_id=(update.effective_message.message_id-1))
+
+    update.message.reply_text(text=change_balance_text_stock_write)
+
     if stock in list_of_stock_symbols:
         s = Stock.get_stock_by_symbol(p, stock)
         s_symbol = s.symbol
@@ -418,8 +419,7 @@ def inline_add_stock_check(update, context):
     p = Portfolio.get_or_create_by_user(u)
     list_of_stock_symbols = Stock.list_of_stock_symbols_in_portfolio(p)
 
-    context.bot.edit_message_text(text=add_stock_write, chat_id=update.effective_chat.id,
-                                  message_id=(update.effective_message.message_id - 1))
+    update.message.reply_text(text=add_stock_write)
 
     if stock in list_of_stock_symbols:
         s = Stock.get_stock_by_symbol(p, stock)
@@ -495,8 +495,9 @@ def inline_delete_stock_check(update, context):
     u = User.get_user(update, context)
     p = Portfolio.get_or_create_by_user(u)
     list_of_stock_symbols = Stock.list_of_stock_symbols_in_portfolio(p)
-    context.bot.edit_message_text(text=delete_stock_write, chat_id=update.effective_chat.id,
-                                  message_id=(update.effective_message.message_id-1))
+
+    update.message.reply_text(text=delete_stock_write)
+
     if stock in list_of_stock_symbols:
         s = Stock.get_stock_by_symbol(p, stock)
         s_symbol = s.symbol
@@ -560,18 +561,21 @@ def close_button(update, context):
     query = update.callback_query
 
     query.answer()
-    try:
-        if context.user_data['NESTED_CLOSE_PORTFOLIO']:
-            query.edit_message_text(text=close_modify_menu_nested_after_start,
-                                    reply_markup=make_keyboard_for_interested_in_bot())
-            context.user_data['NESTED_CLOSE_PORTFOLIO'] = False
-            return INTERESTED_MARK
-        else:
-            query.edit_message_text(text=close_modify_menu_portfolio)
-            return END
-    except:
-        query.edit_message_text(text=close_modify_menu_portfolio)
-        return END
+
+    query.edit_message_text(text=close_modify_menu_portfolio)
+    return END
+    # try:
+    #     if context.user_data['NESTED_CLOSE_PORTFOLIO']:
+    #         query.edit_message_text(text=close_modify_menu_nested_after_start,
+    #                                 reply_markup=make_keyboard_for_interested_in_bot())
+    #         context.user_data['NESTED_CLOSE_PORTFOLIO'] = False
+    #         return INTERESTED_MARK
+    #     else:
+    #         query.edit_message_text(text=close_modify_menu_portfolio)
+    #         return END
+    # except:
+    #     query.edit_message_text(text=close_modify_menu_portfolio)
+    #     return END
 
 
 @send_typing_action
@@ -584,13 +588,11 @@ def mark_interested_button(update, context):
     User.get_user_and_updated_interested_mark(update, context, mark=query.data)
     query.edit_message_text(text=answer_on_mark)
 
-    return END
+    # return END
 
 
 @handler_logging()
 def close_conversation(update, context):
-    # context.bot.edit_message_text(text='Закрыли разговор)', chat_id=update.effective_chat.id,
-    #                               message_id=(update.effective_message.message_id - 1))
     try:
         context.bot.edit_message_reply_markup(chat_id=update.effective_chat.id,
                                               message_id=(update.effective_message.message_id - 1))

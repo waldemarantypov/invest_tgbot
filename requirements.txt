@@ -18,16 +18,10 @@ httptools
 psycopg2-binary
 dj-database-url
 
-# Distributed tasks
-celery
-redis
-django-celery-beat
 
 # Telegram
 python-telegram-bot
 
-# monitoring
-# sentry-sdk
 
 #portfolio
 yfinance
