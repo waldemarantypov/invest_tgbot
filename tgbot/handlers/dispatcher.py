@@ -10,7 +10,7 @@ from telegram.ext import (
     ChosenInlineResultHandler, ConversationHandler
 )
 
-from celery.decorators import task  # event processing in async mode
+# from celery.decorators import task  # event processing in async mode
 
 from dtb.settings import TELEGRAM_TOKEN
 
@@ -35,7 +35,7 @@ def setup_dispatcher(dp):
     """
 
     # start comands and buttons
-    # dp.add_handler(CommandHandler("start", commands.command_start))
+    dp.add_handler(CommandHandler("start", commands.command_start))
     # dp.add_handler(CallbackQueryHandler(currency_button))
     # dp.add_handler(CallbackQueryHandler(trade_experience_button))
     # dp.add_handler(CommandHandler("help", commands.command_help))
@@ -77,9 +77,9 @@ def setup_dispatcher(dp):
                                inline_add_stock_check),
                 MessageHandler((~ Filters.command), inline_wrong_ticket)
             ],
-            INTERESTED_MARK: [
-                CallbackQueryHandler(mark_interested_button, pattern='^' + '[1-5]' + '$'),
-            ],
+            # INTERESTED_MARK: [
+            #     CallbackQueryHandler(mark_interested_button, pattern='^' + '[1-5]' + '$'),
+            # ],
             DELETE_STOCK: [
                 CallbackQueryHandler(modify_button, pattern='^' + 'Back to Modify Options' + '$'),
                 MessageHandler(Filters.regex('^^(([a-zA-Z0-9]{3,6})|([a-zA-Z0-9]{3,6}((\.)|(\-))([a-zA-Z0-9]{1,4})))$'),
@@ -97,19 +97,22 @@ def setup_dispatcher(dp):
     )
     dp.add_handler(portfolio_conv_handler, 2)
 
-    start_conv_handler = ConversationHandler(
-        entry_points=[CommandHandler('start', commands.command_start)],
-        states={
-            # CURRENCY: [CallbackQueryHandler(currency_button, pattern='^(dollar|euro)$')],
-            # TRADE_EXPERIENCE: [CallbackQueryHandler(trade_experience_button, pattern='^(Yes|No)$')],
-            HELP: [CallbackQueryHandler(help_button, pattern='^(Yes|No)$')],
-        },
-        fallbacks=[
-            MessageHandler(Filters.command, close_conversation)
-        ],
-        allow_reentry=True,
-    )
-    dp.add_handler(start_conv_handler, 1)
+    dp.add_handler(CallbackQueryHandler(mark_interested_button, pattern='^' + '[1-5]' + '$'))
+
+
+    # start_conv_handler = ConversationHandler(
+    #     entry_points=[CommandHandler('start', commands.command_start)],
+    #     states={
+    #         # CURRENCY: [CallbackQueryHandler(currency_button, pattern='^(dollar|euro)$')],
+    #         # TRADE_EXPERIENCE: [CallbackQueryHandler(trade_experience_button, pattern='^(Yes|No)$')],
+    #         HELP: [CallbackQueryHandler(help_button, pattern='^(Yes|No)$')],
+    #     },
+    #     fallbacks=[
+    #         MessageHandler(Filters.command, close_conversation)
+    #     ],
+    #     allow_reentry=True,
+    # )
+    # dp.add_handler(start_conv_handler, 1)
 
 
     # admin commands
@@ -160,10 +163,10 @@ def run_pooling():
     updater.idle()
 
 
-@task(ignore_result=True)
-def process_telegram_event(update_json):
-    update = telegram.Update.de_json(update_json, bot)
-    dispatcher.process_update(update)
+# @task(ignore_result=True)
+# def process_telegram_event(update_json):
+#     update = telegram.Update.de_json(update_json, bot)
+#     dispatcher.process_update(update)
 
 
 # Global variable - best way I found to init Telegram bot

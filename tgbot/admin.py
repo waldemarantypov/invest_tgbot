@@ -12,7 +12,7 @@ from tgbot.models import Portfolio, Stock, Transaction
 from tgbot.forms import BroadcastForm
 from tgbot.handlers import utils
 
-from tgbot.tasks import broadcast_message
+# from tgbot.tasks import broadcast_message
 
 
 @admin.register(User)

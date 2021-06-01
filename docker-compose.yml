@@ -1,4 +1,4 @@
-version: "3.8"
+version: "3.3"
 
 services:
   db:
@@ -6,7 +6,7 @@ services:
     container_name: postgres_db
     restart: always
     volumes:
-      - postgres_data:/var/lib/postgresql/data/
+      - postgres_data:/var/lib/postgresql
       - ./sql:/sql/
     environment:
       - POSTGRES_USER=postgres
@@ -15,9 +15,9 @@ services:
       - ./.env
     ports:
       - 5433:5432
-  redis:
-    image: redis:alpine
-    container_name: redis
+#  redis:
+#    image: redis:alpine
+#    container_name: redis
   web:
     build: .
     container_name: django
@@ -32,38 +32,41 @@ services:
       - ./.env
     depends_on:
       - db
-      - redis
+#      - redis
   bot:
     build: .
     container_name: tg_bot
     command: python run_pooling.py
+    restart: always
     env_file:
       - ./.env
     depends_on:
       - web
-  celery:
-    build: .
-    container_name: celery
-    command: celery -A dtb worker --loglevel=INFO
     volumes:
-      - .:/code
-    env_file:
-      - ./.env
-    depends_on:
-      - redis
-      - web
-  celery-beat:
-    build: .
-    container_name: celery_beat
-    command: celery -A dtb beat --loglevel=INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler
-    volumes:
-      - .:/code
-    env_file:
-      - ./.env
-    depends_on:
-      - redis
-      - celery
-      - web
+      - .:/src
+#  celery:
+#    build: .
+#    container_name: celery
+#    command: celery -A dtb worker --loglevel=INFO
+#    volumes:
+#      - .:/code
+#    env_file:
+#      - ./.env
+#    depends_on:
+#      - redis
+#      - web
+#  celery-beat:
+#    build: .
+#    container_name: celery_beat
+#    command: celery -A dtb beat --loglevel=INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler
+#    volumes:
+#      - .:/code
+#    env_file:
+#      - ./.env
+#    depends_on:
+#      - redis
+#      - celery
+#      - web
 
 volumes:
   postgres_data:

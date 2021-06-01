@@ -1,20 +1,18 @@
-import telegram
 import datetime
 import re
 
-from tgbot.handlers.keyboard_utils import keyboard_confirm_decline_broadcasting, make_keyboard_for_start_currency, \
-    make_keyboard_for_start_trade_experience, make_keyboard_for_portfolio_net, make_keyboard_for_start_help
-from tgbot.handlers.static_text import start_help_tune_portfolio_text, start_trade_experience_recommendation_text
-from tgbot.handlers.utils import handler_logging, send_typing_action
-from tgbot.models import User, Portfolio, Stock, Transaction
+import telegram
 from django.utils import timezone
-from tgbot.handlers import static_text
 from telegram.ext import (
     ConversationHandler
 )
 
-from tgbot.portfolio_utils import portfolio_summary, portfolio_update, portfolio_output_efficiency
-
+from tgbot.handlers import static_text
+from tgbot.handlers.keyboard_utils import keyboard_confirm_decline_broadcasting, make_keyboard_for_portfolio_net
+from tgbot.handlers.utils import handler_logging, send_typing_action
+from tgbot.models import User, Portfolio, Stock
+from tgbot.portfolio_utils import portfolio_update, portfolio_output_efficiency
+# from tgbot.tasks import broadcast_message_rate_bot_pls
 from tgbot.utils import extract_user_data_from_update
 
 CURRENCY, TRADE_EXPERIENCE, HELP, CLOSE_PORTFOLIO, INTERESTED_MARK = range(5)
@@ -28,41 +26,54 @@ END = ConversationHandler.END
 @send_typing_action
 @handler_logging()
 def command_start(update, context):
-    try:
-        context.bot.edit_message_reply_markup(chat_id=update.effective_chat.id,
-                                              message_id=(update.effective_message.message_id - 1))
-    except telegram.error.BadRequest:
-        ...
-
-    context.user_data['NESTED_CLOSE_PORTFOLIO'] = True
-
     u, created = User.get_user_and_created(update, context)
-
-    # if created:
-    #     welcome_text = static_text.start_created.format(first_name=u.first_name)
-    # else:
-    #     welcome_text = static_text.start_not_created.format(first_name=u.first_name)
 
     welcome_text = static_text.start_created.format(first_name=u.first_name)
 
-    # update.message.reply_text(text=text,
-    #                           reply_markup=make_keyboard_for_start_command())
-
     update.message.reply_text(text=welcome_text)
-    # time.sleep(1)
-    update.message.reply_text(text=static_text.start_intro)
-    # time.sleep(2)
 
-    # update.message.reply_text(text=static_text.start_currency, reply_markup=make_keyboard_for_start_currency())
-    # return CURRENCY
+    update.message.reply_text(text=static_text.start_created_2nd_string)
+    # broadcast_message_rate_bot_pls.apply_async(args=(u.user_id,), countdown=100)
 
-    update.message.reply_text(text=start_trade_experience_recommendation_text)
-    # time.sleep(3)
-    update.message.reply_text(text=start_help_tune_portfolio_text)
-    # time.sleep(3)
-    update.message.reply_text(text=static_text.start_help_tune_portfolio_question_text,
-                              reply_markup=make_keyboard_for_start_help())
-    return HELP
+
+# @send_typing_action
+# @handler_logging()
+# def command_start(update, context):
+#     try:
+#         context.bot.edit_message_reply_markup(chat_id=update.effective_chat.id,
+#                                               message_id=(update.effective_message.message_id - 1))
+#     except telegram.error.BadRequest:
+#         ...
+#
+#     context.user_data['NESTED_CLOSE_PORTFOLIO'] = True
+#
+#     u, created = User.get_user_and_created(update, context)
+#
+#     # if created:
+#     #     welcome_text = static_text.start_created.format(first_name=u.first_name)
+#     # else:
+#     #     welcome_text = static_text.start_not_created.format(first_name=u.first_name)
+#
+#     welcome_text = static_text.start_created.format(first_name=u.first_name)
+#
+#     # update.message.reply_text(text=text,
+#     #                           reply_markup=make_keyboard_for_start_command())
+#
+#     update.message.reply_text(text=welcome_text)
+#     # time.sleep(1)
+#     update.message.reply_text(text=static_text.start_intro)
+#     # time.sleep(2)
+#
+#     # update.message.reply_text(text=static_text.start_currency, reply_markup=make_keyboard_for_start_currency())
+#     # return CURRENCY
+#
+#     update.message.reply_text(text=start_trade_experience_recommendation_text)
+#     # time.sleep(3)
+#     update.message.reply_text(text=start_help_tune_portfolio_text)
+#     # time.sleep(3)
+#     update.message.reply_text(text=static_text.start_help_tune_portfolio_question_text,
+#                               reply_markup=make_keyboard_for_start_help())
+#     return HELP
 
 
 @send_typing_action
