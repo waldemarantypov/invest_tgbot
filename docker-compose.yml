@@ -7,12 +7,12 @@ services:
     restart: always
     volumes:
       - ./postgres/postgres_data:/var/lib/postgresql
-      - ./sql:/sql/
+      - ./db.sql:/docker-entrypoint-initdb.d/db.sql
       - ./postgres/postgres.conf:/usr/local/etc/postgres/postgres.conf
     environment:
-      - POSTGRES_DB=postgres
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
 #    env_file:
 #      - ./.env
     ports:
@@ -30,8 +30,11 @@ services:
       - 8000:8000
     environment:
       - DJANGO_DEBUG='True'
-    env_file:
-      - ./.env
+      - DATABASE_URL=postgres://postgres:postgres@docker.for.mac.host.internal/${POSTGRES_DB}
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+#    env_file:
+#      - ./.env
     depends_on:
       - db
 #      - redis
@@ -40,8 +43,9 @@ services:
     container_name: tg_bot
     command: python run_pooling.py
     restart: always
-    env_file:
-      - ./.env
+    environment:
+      - TELEGRAM_TOKEN=1779291462:AAEI1yOW-50qmi6LPkAGTSfJjP_AW9PWZGo
+      - DATABASE_URL=postgres://postgres:postgres@docker.for.mac.host.internal/${POSTGRES_DB}
     depends_on:
       - web
     volumes:
