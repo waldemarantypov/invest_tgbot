@@ -164,9 +164,9 @@ def run_pooling():
 
 
 # @task(ignore_result=True)
-# def process_telegram_event(update_json):
-#     update = telegram.Update.de_json(update_json, bot)
-#     dispatcher.process_update(update)
+def process_telegram_event(update_json):
+    update = telegram.Update.de_json(update_json, bot)
+    dispatcher.process_update(update)
 
 
 # Global variable - best way I found to init Telegram bot
