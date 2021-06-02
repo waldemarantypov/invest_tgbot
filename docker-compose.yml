@@ -2,19 +2,20 @@ version: "3.8"
 
 services:
   db:
-    image: postgres:12
+    image: postgres:latest
     container_name: postgres_db
     restart: always
     volumes:
-      - postgres_data:/var/lib/postgresql
+      - ./postgres/postgres_data:/var/lib/postgresql
       - ./sql:/sql/
+      - ./postgres/postgres.conf:/usr/local/etc/postgres/postgres.conf
     environment:
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_PASSWORD=Ageeva21
     env_file:
       - ./.env
     ports:
-      - 5433:5432
+      - 5432:5432
 #  redis:
 #    image: redis:alpine
 #    container_name: redis
