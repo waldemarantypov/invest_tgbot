@@ -33,6 +33,7 @@ def setup_dispatcher(dp):
     """
     Adding handlers for events from Telegram
     """
+    dp.add_handler(CommandHandler("start", commands.command_start))
 
     portfolio_conv_handler = ConversationHandler(
         entry_points=[CommandHandler('portfolio', commands.command_portfolio)],
