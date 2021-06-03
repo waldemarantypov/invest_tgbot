@@ -29,9 +29,8 @@ services:
     ports:
       - 8000:8000
     environment:
-      - DJANGO_DEBUG='True'
-#      - DATABASE_URL=postgres://postgres:postgres@docker.for.mac.host.internal/${POSTGRES_DB}
-      - DATABASE_URL=postgres://postgres:postgres@postgres:5432/${POSTGRES_DB}
+      - DJANGO_DEBUG
+      - DATABASE_URL
       - POSTGRES_USER
       - POSTGRES_PASSWORD
 #    env_file:
@@ -42,12 +41,11 @@ services:
   bot:
     build: .
     container_name: tg_bot
-    command: python run_pooling.py
+#    command: python run_pooling.py
     restart: always
     environment:
       - TELEGRAM_TOKEN
-#      - DATABASE_URL=postgres://postgres:postgres@docker.for.mac.host.internal/${POSTGRES_DB}
-      - DATABASE_URL=postgres://postgres:postgres@postgres:5432/${POSTGRES_DB}
+      - DATABASE_URL
     depends_on:
       - web
     volumes:
