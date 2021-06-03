@@ -8,7 +8,7 @@ services:
     volumes:
       - ./postgres/postgres_data:/var/lib/postgresql
       - ./db.sql:/docker-entrypoint-initdb.d/db.sql
-      - ./postgres/postgres.conf:/usr/local/etc/postgres/postgres.conf
+#      - ./postgres/postgres.conf:/usr/local/etc/postgres/postgres.conf
 #    environment:
 #      - POSTGRES_DB
 #      - POSTGRES_USER
