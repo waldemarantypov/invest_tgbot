@@ -8,18 +8,10 @@ services:
     volumes:
       - ./postgres/postgres_data:/var/lib/postgresql
       - ./db.sql:/docker-entrypoint-initdb.d/db.sql
-#      - ./postgres/postgres.conf:/usr/local/etc/postgres/postgres.conf
-#    environment:
-#      - POSTGRES_DB
-#      - POSTGRES_USER
-#      - POSTGRES_PASSWORD
     env_file:
       - ./.env
     ports:
       - 5432:5432
-#  redis:
-#    image: redis:alpine
-#    container_name: redis
   web:
     build: .
     container_name: django
@@ -28,51 +20,21 @@ services:
       - .:/code
     ports:
       - 8000:8000
-#    environment:
-#      - DJANGO_DEBUG
-#      - DATABASE_URL
-#      - POSTGRES_USER
-#      - POSTGRES_PASSWORD
     env_file:
       - ./.env
     depends_on:
       - postgres
-#      - redis
   bot:
     build: .
     container_name: tg_bot
     command: python run_pooling.py
     restart: always
-    environment:
-      - TELEGRAM_TOKEN
-      - DATABASE_URL
+    env_file:
+      - ./.env
     depends_on:
       - web
     volumes:
       - .:/code
-#  celery:
-#    build: .
-#    container_name: celery
-#    command: celery -A dtb worker --loglevel=INFO
-#    volumes:
-#      - .:/code
-#    env_file:
-#      - ./.env
-#    depends_on:
-#      - redis
-#      - web
-#  celery-beat:
-#    build: .
-#    container_name: celery_beat
-#    command: celery -A dtb beat --loglevel=INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler
-#    volumes:
-#      - .:/code
-#    env_file:
-#      - ./.env
-#    depends_on:
-#      - redis
-#      - celery
-#      - web
 
 volumes:
   postgres_data:

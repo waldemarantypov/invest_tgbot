@@ -128,18 +128,6 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static')
 
 
-# -----> CELERY
-# REDIS_URL = os.getenv('REDIS_URL', 'redis://redis:6379/0')
-# BROKER_URL = REDIS_URL
-# CELERY_BROKER_URL = REDIS_URL
-# CELERY_RESULT_BACKEND = REDIS_URL
-# CELERY_ACCEPT_CONTENT = ['application/json']
-# CELERY_TASK_SERIALIZER = 'json'
-# CELERY_RESULT_SERIALIZER = 'json'
-# CELERY_TIMEZONE = TIME_ZONE
-# CELERY_TASK_DEFAULT_QUEUE = 'default'
-
-
 # -----> TELEGRAM
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
 
@@ -147,24 +135,4 @@ TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
 # -----> LOGGING
 ENABLE_DECORATOR_LOGGING = os.getenv('ENABLE_DECORATOR_LOGGING', True)
 
-
-# -----> SENTRY
-# import sentry_sdk
-# from sentry_sdk.integrations.django import DjangoIntegration
-# from sentry_sdk.integrations.celery import CeleryIntegration
-# from sentry_sdk.integrations.redis import RedisIntegration
-
-# sentry_sdk.init(
-#     dsn="INPUT ...ingest.sentry.io/ LINK",
-#     integrations=[
-#         DjangoIntegration(),
-#         CeleryIntegration(),
-#         RedisIntegration(),
-#     ],
-#     traces_sample_rate=0.1,
-
-#     # If you wish to associate users to errors (assuming you are using
-#     # django.contrib.auth) you may enable sending PII data.
-#     send_default_pii=True
-# )
 

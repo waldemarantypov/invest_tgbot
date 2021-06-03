@@ -34,12 +34,6 @@ def setup_dispatcher(dp):
     Adding handlers for events from Telegram
     """
 
-    # start comands and buttons
-    dp.add_handler(CommandHandler("start", commands.command_start))
-    # dp.add_handler(CallbackQueryHandler(currency_button))
-    # dp.add_handler(CallbackQueryHandler(trade_experience_button))
-    # dp.add_handler(CommandHandler("help", commands.command_help))
-
     portfolio_conv_handler = ConversationHandler(
         entry_points=[CommandHandler('portfolio', commands.command_portfolio)],
         states={
@@ -98,21 +92,6 @@ def setup_dispatcher(dp):
     dp.add_handler(portfolio_conv_handler, 2)
 
     dp.add_handler(CallbackQueryHandler(mark_interested_button, pattern='^' + '[1-5]' + '$'))
-
-
-    # start_conv_handler = ConversationHandler(
-    #     entry_points=[CommandHandler('start', commands.command_start)],
-    #     states={
-    #         # CURRENCY: [CallbackQueryHandler(currency_button, pattern='^(dollar|euro)$')],
-    #         # TRADE_EXPERIENCE: [CallbackQueryHandler(trade_experience_button, pattern='^(Yes|No)$')],
-    #         HELP: [CallbackQueryHandler(help_button, pattern='^(Yes|No)$')],
-    #     },
-    #     fallbacks=[
-    #         MessageHandler(Filters.command, close_conversation)
-    #     ],
-    #     allow_reentry=True,
-    # )
-    # dp.add_handler(start_conv_handler, 1)
 
 
     # admin commands

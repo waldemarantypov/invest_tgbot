@@ -26,6 +26,12 @@ END = ConversationHandler.END
 @send_typing_action
 @handler_logging()
 def command_start(update, context):
+    try:
+        context.bot.edit_message_reply_markup(chat_id=update.effective_chat.id,
+                                              message_id=(update.effective_message.message_id - 1))
+    except telegram.error.BadRequest:
+        ...
+
     u, created = User.get_user_and_created(update, context)
 
     welcome_text = static_text.start_created.format(first_name=u.first_name)
