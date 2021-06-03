@@ -1,9 +1,9 @@
 version: "3.8"
 
 services:
-  postgres2:
+  postgres:
     image: postgres:latest
-    container_name: postgres2
+    container_name: postgres
     restart: always
     volumes:
       - ./postgres/postgres_data:/var/lib/postgresql
@@ -36,7 +36,7 @@ services:
     env_file:
       - ./.env
     depends_on:
-      - postgres2
+      - postgres
 #      - redis
   bot:
     build: .
