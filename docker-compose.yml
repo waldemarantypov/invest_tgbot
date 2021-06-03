@@ -38,18 +38,18 @@ services:
     depends_on:
       - postgres
 #      - redis
-  bot:
-    build: .
-    container_name: tg_bot
-#    command: python run_pooling.py
-    restart: always
-    environment:
-      - TELEGRAM_TOKEN
-      - DATABASE_URL
-    depends_on:
-      - web
-    volumes:
-      - .:/code
+#  bot:
+#    build: .
+#    container_name: tg_bot
+##    command: python run_pooling.py
+#    restart: always
+#    environment:
+#      - TELEGRAM_TOKEN
+#      - DATABASE_URL
+#    depends_on:
+#      - web
+#    volumes:
+#      - .:/code
 #  celery:
 #    build: .
 #    container_name: celery
