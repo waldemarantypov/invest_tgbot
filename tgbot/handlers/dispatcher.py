@@ -20,7 +20,7 @@ from tgbot.handlers.handlers import secret_level, broadcast_decision_handler, mo
     close_button, modify_to_invest_button, inline_modify_stock_check, inline_modify_stock_shares, \
     inline_modify_to_invest, \
     inline_wrong_ticket, inline_modify_stock_total_costs, inline_add_stock_check, inline_wrong_ticket_add_stock, \
-    mark_interested_button, delete_stock_exact_button, inline_delete_stock_check, inline_wrong_ticket_delete_stock, \
+    delete_stock_exact_button, inline_delete_stock_check, inline_wrong_ticket_delete_stock, \
     portfolio_values_button, update_portfolio, close_conversation
 from tgbot.handlers.manage_data import SECRET_LEVEL_BUTTON, CONFIRM_DECLINE_BROADCAST
 from tgbot.handlers.static_text import broadcast_command
@@ -90,8 +90,6 @@ def setup_dispatcher(dp):
         allow_reentry=True,
     )
     dp.add_handler(portfolio_conv_handler, 2)
-
-    dp.add_handler(CallbackQueryHandler(mark_interested_button, pattern='^' + '[1-5]' + '$'))
 
 
     # admin commands
