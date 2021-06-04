@@ -1,43 +1,34 @@
 import datetime
+import time
+
 import telegram
 import yfinance as yf
-
-
-from tgbot.handlers.manage_data import CONFIRM_DECLINE_BROADCAST, CONFIRM_BROADCAST
-from tgbot.handlers.static_text import unlock_secret_room, message_is_sent, start_currency_button_answer_button,\
-    start_currency_dollar_text, start_currency_euro_text, start_trade_experience_button_answer_yes_button,\
-    start_trade_experience_button_answer_no_button, start_trade_experience, start_trade_experience_recommendation_text,\
-    start_help_tune_portfolio_text, start_help_tune_portfolio_question_text, start_important_to_invest_text,\
-    start_help_button_answer_yes_button, start_help_button_answer_no_button, start_write_portfolio_command_text,\
-    modify_question, change_balance_text, change_to_invest_text, changed_to_invest_text, modify_wrong_ticket, \
-    modify_balance_stock_not_in_portfolio, modify_balance_stock_symbol_shares, modify_balance_stock_shares_success, \
-    change_balance_text_stock_write, close_modify_menu_portfolio, close_modify_menu_nested_after_start, \
-    modify_balance_stock_total_costs_success, add_stock_text, add_stock_symbol_check_already_have, \
-    add_stock_symbol_check_success, add_stock_not_in_yfinance, answer_on_mark, delete_stock_text, delete_stock_write, \
-    delete_stock_info, delete_stock_success, delete_stock_cancel, add_wrong_ticket, delete_wrong_ticket, add_stock_write, \
-    wait_update
-from tgbot.handlers.keyboard_utils import make_keyboard_for_start_trade_experience, make_keyboard_for_start_help,\
-    make_keyboard_for_modify_options, make_keyboard_for_modify_to_invest_or_back, make_keyboard_for_add_stock_go_back, \
-    make_keyboard_for_interested_in_bot, make_keyboard_for_delete_stock, make_keyboard_for_portfolio_total, \
-    make_keyboard_for_portfolio_net, make_keyboard_for_portfolio_costs, make_keyboard_for_portfolio_amount, \
-    make_keyboard_for_portfolio_efficiency
-from tgbot.handlers.utils import handler_logging, send_typing_action
-
-from tgbot.handlers.commands import TRADE_EXPERIENCE, CURRENCY, HELP, CLOSE_PORTFOLIO, END, INTERESTED_MARK
-from tgbot.handlers.commands import MODIFY, MODIFY_OPTIONS, TO_INVEST, BALANCE, STOCK_SHARES, STOCK_TOTAL_COSTS,\
-    ADD_STOCK, DELETE_STOCK, EXACT_DELETE_STOCK
-
-from tgbot.models import User, Portfolio, Stock
-# from tgbot.tasks import broadcast_message
-from tgbot.utils import extract_user_data_from_update
 from django.utils import timezone
 from telegram.ext import (
     ConversationHandler
 )
 
-from tgbot.portfolio_utils import portfolio_summary, portfolio_output_net, portfolio_output_total, \
+from tgbot.handlers.commands import MODIFY, MODIFY_OPTIONS, TO_INVEST, BALANCE, STOCK_SHARES, STOCK_TOTAL_COSTS, \
+    ADD_STOCK, DELETE_STOCK, EXACT_DELETE_STOCK
+from tgbot.handlers.commands import TRADE_EXPERIENCE, HELP, END
+from tgbot.handlers.keyboard_utils import make_keyboard_for_modify_options, make_keyboard_for_modify_to_invest_or_back,\
+    make_keyboard_for_add_stock_go_back, make_keyboard_for_delete_stock, make_keyboard_for_portfolio_total,\
+    make_keyboard_for_portfolio_net, make_keyboard_for_portfolio_costs, make_keyboard_for_portfolio_amount,\
+    make_keyboard_for_portfolio_efficiency
+from tgbot.handlers.manage_data import CONFIRM_DECLINE_BROADCAST, CONFIRM_BROADCAST
+from tgbot.handlers.static_text import unlock_secret_room, message_is_sent, modify_question, change_balance_text,\
+    change_to_invest_text, changed_to_invest_text, modify_wrong_ticket, \
+    modify_balance_stock_not_in_portfolio, modify_balance_stock_symbol_shares, modify_balance_stock_shares_success, \
+    change_balance_text_stock_write, close_modify_menu_portfolio, modify_balance_stock_total_costs_success, \
+    add_stock_text, add_stock_symbol_check_already_have, add_stock_symbol_check_success, add_stock_not_in_yfinance,\
+    delete_stock_text, delete_stock_write, delete_stock_info, delete_stock_success, delete_stock_cancel,\
+    add_wrong_ticket, delete_wrong_ticket, add_stock_write, wait_update
+from tgbot.handlers.utils import handler_logging, send_typing_action
+from tgbot.models import User, Portfolio, Stock
+from tgbot.portfolio_utils import portfolio_output_net, portfolio_output_total, \
     portfolio_output_amount, portfolio_output_costs, portfolio_output_efficiency, portfolio_update
-
+# from tgbot.tasks import broadcast_message
+from tgbot.utils import extract_user_data_from_update
 
 
 @send_typing_action
@@ -56,73 +47,6 @@ def secret_level(update, context): #callback_data: SECRET_LEVEL_BUTTON variable 
         message_id=update.callback_query.message.message_id,
         parse_mode=telegram.ParseMode.MARKDOWN
     )
-
-'''
-Start command functions
-'''
-
-
-@send_typing_action
-@handler_logging()
-def currency_button(update, context):
-    query = update.callback_query
-
-    query.answer()
-
-    if query.data == 'dollar':
-        currency = start_currency_dollar_text
-    elif query.data == 'euro':
-        currency = start_currency_euro_text
-
-    User.get_user_and_updated_currency(update, context, currency=query.data)
-    query.edit_message_text(text=start_currency_button_answer_button.format(currency=currency))
-    context.bot.sendMessage(chat_id=update.effective_chat.id, text=start_trade_experience,
-                            reply_markup=make_keyboard_for_start_trade_experience())
-
-    return TRADE_EXPERIENCE
-
-
-@send_typing_action
-@handler_logging()
-def trade_experience_button(update, context):
-    query = update.callback_query
-
-    query.answer()
-
-    if query.data == 'Yes':
-        trade_experience = start_trade_experience_button_answer_yes_button
-    elif query.data == 'No':
-        trade_experience = start_trade_experience_button_answer_no_button
-
-    User.get_user_and_updated_trade_experience(update, context, trade_experience=query.data)
-    query.edit_message_text(text=trade_experience)
-    context.bot.sendMessage(chat_id=update.effective_chat.id, text=start_trade_experience_recommendation_text)
-    context.bot.sendMessage(chat_id=update.effective_chat.id, text=start_help_tune_portfolio_text)
-    context.bot.sendMessage(chat_id=update.effective_chat.id, text=start_help_tune_portfolio_question_text,
-                            reply_markup=make_keyboard_for_start_help())
-
-    return HELP
-
-
-@send_typing_action
-@handler_logging()
-def help_button(update, context):
-    query = update.callback_query
-
-    query.answer()
-
-    if query.data == 'Yes':
-        query.edit_message_text(text=start_help_button_answer_yes_button)
-        context.bot.sendMessage(chat_id=update.effective_chat.id, text=start_important_to_invest_text)
-        context.bot.sendMessage(chat_id=update.effective_chat.id, text=start_write_portfolio_command_text)
-
-        return MODIFY
-
-    elif query.data == 'No':
-        query.edit_message_text(text=start_help_button_answer_no_button)
-
-        return ConversationHandler.END
-
 
 
 '''
@@ -275,6 +199,7 @@ def inline_modify_to_invest(update, context):
     text = changed_to_invest_text.format(to_invest=to_invest)
 
     update.message.reply_text(text=text)
+    time.sleep(2)
     update.message.reply_text(text=modify_question,
                               reply_markup=make_keyboard_for_modify_options())
 
@@ -320,6 +245,7 @@ def inline_modify_stock_check(update, context):
         return STOCK_SHARES
     else:
         context.bot.sendMessage(chat_id=update.effective_chat.id, text=modify_balance_stock_not_in_portfolio)
+        time.sleep(2)
         return balance_button(update, context)
 
 
@@ -369,6 +295,7 @@ Inline: wrong inline
 @handler_logging()
 def inline_wrong_ticket(update, context):
     context.bot.sendMessage(chat_id=update.effective_chat.id, text=modify_wrong_ticket)
+    time.sleep(2)
     return balance_button(update, context)
 
 
@@ -425,7 +352,7 @@ def inline_add_stock_check(update, context):
         s = Stock.get_stock_by_symbol(p, stock)
 
         update.message.reply_text(add_stock_symbol_check_already_have.format(symbol=s.symbol, shares=s.shares))
-
+        time.sleep(2)
         return add_stock_button(update, context)
     else:
         try:
@@ -437,6 +364,7 @@ def inline_add_stock_check(update, context):
             return STOCK_SHARES
         except KeyError:
             context.bot.sendMessage(chat_id=update.effective_chat.id, text=add_stock_not_in_yfinance)
+            time.sleep(2)
             return add_stock_button(update, context)
 
 
@@ -444,6 +372,7 @@ def inline_add_stock_check(update, context):
 @handler_logging()
 def inline_wrong_ticket_add_stock(update, context):
     context.bot.sendMessage(chat_id=update.effective_chat.id, text=add_wrong_ticket)
+    time.sleep(2)
     return add_stock_button(update, context)
 
 
@@ -510,6 +439,7 @@ def inline_delete_stock_check(update, context):
         return EXACT_DELETE_STOCK
     else:
         context.bot.sendMessage(chat_id=update.effective_chat.id, text=modify_balance_stock_not_in_portfolio)
+        time.sleep(2)
         return delete_stock_button(update, context)
 
 
@@ -529,6 +459,7 @@ def delete_stock_exact_button(update, context):
 
     context.user_data['already_visit_delete_stock'] = True
     query.edit_message_text(text=text)
+    time.sleep(2)
     return delete_stock_button(update, context)
 
 
@@ -564,31 +495,6 @@ def close_button(update, context):
 
     query.edit_message_text(text=close_modify_menu_portfolio)
     return END
-    # try:
-    #     if context.user_data['NESTED_CLOSE_PORTFOLIO']:
-    #         query.edit_message_text(text=close_modify_menu_nested_after_start,
-    #                                 reply_markup=make_keyboard_for_interested_in_bot())
-    #         context.user_data['NESTED_CLOSE_PORTFOLIO'] = False
-    #         return INTERESTED_MARK
-    #     else:
-    #         query.edit_message_text(text=close_modify_menu_portfolio)
-    #         return END
-    # except:
-    #     query.edit_message_text(text=close_modify_menu_portfolio)
-    #     return END
-
-
-@send_typing_action
-@handler_logging()
-def mark_interested_button(update, context):
-    query = update.callback_query
-
-    query.answer()
-
-    User.get_user_and_updated_interested_mark(update, context, mark=query.data)
-    query.edit_message_text(text=answer_on_mark)
-
-    # return END
 
 
 @handler_logging()

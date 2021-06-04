@@ -16,8 +16,7 @@ from dtb.settings import TELEGRAM_TOKEN
 
 from tgbot.handlers import admin, commands, files, location
 from tgbot.handlers.commands import broadcast_command_with_message
-from tgbot.handlers.handlers import secret_level, broadcast_decision_handler, currency_button, trade_experience_button, \
-    help_button, modify_button, balance_button, add_stock_button, delete_stock_button, \
+from tgbot.handlers.handlers import secret_level, broadcast_decision_handler, modify_button, balance_button, add_stock_button, delete_stock_button, \
     close_button, modify_to_invest_button, inline_modify_stock_check, inline_modify_stock_shares, \
     inline_modify_to_invest, \
     inline_wrong_ticket, inline_modify_stock_total_costs, inline_add_stock_check, inline_wrong_ticket_add_stock, \

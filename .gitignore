@@ -134,3 +134,6 @@ dmypy.json
 #Docker
 .Dockerfile.swp
 readme.md
+
+#text
+static_text_full_version.py
