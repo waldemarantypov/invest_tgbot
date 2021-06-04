@@ -1,5 +1,6 @@
 import datetime
 import time
+import json
 
 import telegram
 import yfinance as yf
@@ -157,10 +158,18 @@ def balance_button(update, context):
     try:
         query = update.callback_query
         query.answer()
-        query.edit_message_text(text=change_balance_text, reply_markup=make_keyboard_for_modify_to_invest_or_back())
+        query.delete_message()
     except AttributeError:
-        context.bot.sendMessage(chat_id=update.effective_chat.id, text=change_balance_text,
-                                reply_markup=make_keyboard_for_modify_to_invest_or_back())
+        ...
+
+    # context.bot.sendMessage(chat_id=update.effective_chat.id, text=change_balance_text,
+    #                         reply_markup=make_keyboard_for_modify_to_invest_or_back())
+
+    file = r"tgbot/static/gif/edit_stock.gif.mp4"
+    file = open(file, 'rb')
+    context.bot.sendAnimation(chat_id=update.effective_chat.id, animation=file, caption=change_balance_text,
+                              reply_markup=make_keyboard_for_modify_to_invest_or_back())
+
     return BALANCE
 
 '''
@@ -269,6 +278,7 @@ def inline_modify_stock_total_costs(update, context):
     update.message.reply_text(modify_balance_stock_total_costs_success.format(stock=stock.symbol,
                                                                               total_costs=stock.total_costs,
                                                                               shares=stock.shares))
+    time.sleep(2)
     if context.user_data['changing_status(new_stock_or_already_existed)'] == 'already_existed':
         return balance_button(update, context)
     elif context.user_data['changing_status(new_stock_or_already_existed)'] == 'new_stock':
@@ -328,13 +338,19 @@ Options - 1 button(go back to modify button(in dispatcher)) and 2 inlines(add_st
 @send_typing_action
 @handler_logging()
 def add_stock_button(update, context):
+    file = r"tgbot/static/gif/add_stock.gif.mp4"
+    file = open(file, 'rb')
     try:
         query = update.callback_query
         query.answer()
-        query.edit_message_text(text=add_stock_text, reply_markup=make_keyboard_for_add_stock_go_back())
+        query.delete_message()
     except AttributeError:
-        context.bot.sendMessage(chat_id=update.effective_chat.id, text=add_stock_text,
-                                reply_markup=make_keyboard_for_add_stock_go_back())
+        ...
+
+    file = r"tgbot/static/gif/add_stock.gif.mp4"
+    file = open(file, 'rb')
+    context.bot.sendAnimation(chat_id=update.effective_chat.id, animation=file, caption=add_stock_text,
+                              reply_markup=make_keyboard_for_add_stock_go_back())
     return ADD_STOCK
 
 
@@ -397,21 +413,33 @@ Options - 1 button(go back to modify button(in dispatcher)) and 2 inlines(add_st
 @send_typing_action
 @handler_logging()
 def delete_stock_button(update, context):
+    file = r"tgbot/static/gif/delete_stock.gif.mp4"
+    file = open(file, 'rb')
     try:
         if context.user_data['already_visit_delete_stock']:
-            context.bot.sendMessage(chat_id=update.effective_chat.id, text=delete_stock_text,
-                                    reply_markup=make_keyboard_for_add_stock_go_back())
+            # context.bot.sendMessage(chat_id=update.effective_chat.id, text=delete_stock_text,
+            #                         reply_markup=make_keyboard_for_add_stock_go_back())
+            context.bot.sendAnimation(chat_id=update.effective_chat.id, animation=file, caption=delete_stock_text,
+                                      reply_markup=make_keyboard_for_add_stock_go_back())
         else:
             query = update.callback_query
             query.answer()
-            query.edit_message_text(text=delete_stock_text, reply_markup=make_keyboard_for_add_stock_go_back())
+            # query.edit_message_text(text=delete_stock_text, reply_markup=make_keyboard_for_add_stock_go_back())
+            query.delete_message()
+            context.bot.sendAnimation(chat_id=update.effective_chat.id, animation=file, caption=delete_stock_text,
+                                      reply_markup=make_keyboard_for_add_stock_go_back())
     except AttributeError:
-        context.bot.sendMessage(chat_id=update.effective_chat.id, text=delete_stock_text,
-                                reply_markup=make_keyboard_for_add_stock_go_back())
+        # context.bot.sendMessage(chat_id=update.effective_chat.id, text=delete_stock_text,
+        #                         reply_markup=make_keyboard_for_add_stock_go_back())
+        context.bot.sendAnimation(chat_id=update.effective_chat.id, animation=file, caption=delete_stock_text,
+                                  reply_markup=make_keyboard_for_add_stock_go_back())
     except KeyError:
         query = update.callback_query
         query.answer()
-        query.edit_message_text(text=delete_stock_text, reply_markup=make_keyboard_for_add_stock_go_back())
+        # query.edit_message_text(text=delete_stock_text, reply_markup=make_keyboard_for_add_stock_go_back())
+        query.delete_message()
+        context.bot.sendAnimation(chat_id=update.effective_chat.id, animation=file, caption=delete_stock_text,
+                                  reply_markup=make_keyboard_for_add_stock_go_back())
 
     context.user_data['already_visit_delete_stock'] = False
     return DELETE_STOCK

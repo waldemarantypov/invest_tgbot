@@ -4,7 +4,7 @@
 
 import telegram
 from telegram.ext import (
-    Updater, Dispatcher, Filters,
+    Updater, Dispatcher, Filters, PicklePersistence,
     CommandHandler, MessageHandler,
     InlineQueryHandler, CallbackQueryHandler,
     ChosenInlineResultHandler, ConversationHandler
@@ -33,6 +33,7 @@ def setup_dispatcher(dp):
     Adding handlers for events from Telegram
     """
     dp.add_handler(CommandHandler("start", commands.command_start))
+    dp.add_handler(CommandHandler("feedback", commands.command_feedback))
 
     portfolio_conv_handler = ConversationHandler(
         entry_points=[CommandHandler('portfolio', commands.command_portfolio)],
@@ -88,6 +89,8 @@ def setup_dispatcher(dp):
             MessageHandler(Filters.command, close_conversation)
         ],
         allow_reentry=True,
+        persistent=True,
+        name='portfolio_conversation_persistance',
     )
     dp.add_handler(portfolio_conv_handler, 2)
 
@@ -127,7 +130,7 @@ def setup_dispatcher(dp):
 
 def run_pooling():
     """ Run bot in pooling mode """
-    updater = Updater(TELEGRAM_TOKEN, use_context=True)
+    updater = Updater(TELEGRAM_TOKEN, persistence=my_persistence, use_context=True)
 
     dp = updater.dispatcher
     dp = setup_dispatcher(dp)
@@ -148,5 +151,6 @@ def process_telegram_event(update_json):
 
 # Global variable - best way I found to init Telegram bot
 bot = telegram.Bot(TELEGRAM_TOKEN)
-dispatcher = setup_dispatcher(Dispatcher(bot, None, workers=0, use_context=True))
+my_persistence = PicklePersistence(filename='my_persistence_file')
+dispatcher = setup_dispatcher(Dispatcher(bot, None, workers=0, persistence=my_persistence, use_context=True))
 TELEGRAM_BOT_USERNAME = bot.get_me()["username"]

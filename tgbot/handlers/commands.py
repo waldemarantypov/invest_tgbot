@@ -1,6 +1,8 @@
 import datetime
 import re
 
+from pathlib import Path
+
 import telegram
 from django.utils import timezone
 from telegram.ext import (
@@ -39,47 +41,22 @@ def command_start(update, context):
     update.message.reply_text(text=welcome_text)
 
     update.message.reply_text(text=static_text.start_created_2nd_string)
+
+
     # broadcast_message_rate_bot_pls.apply_async(args=(u.user_id,), countdown=100)
 
 
-# @send_typing_action
-# @handler_logging()
-# def command_start(update, context):
-#     try:
-#         context.bot.edit_message_reply_markup(chat_id=update.effective_chat.id,
-#                                               message_id=(update.effective_message.message_id - 1))
-#     except telegram.error.BadRequest:
-#         ...
-#
-#     context.user_data['NESTED_CLOSE_PORTFOLIO'] = True
-#
-#     u, created = User.get_user_and_created(update, context)
-#
-#     # if created:
-#     #     welcome_text = static_text.start_created.format(first_name=u.first_name)
-#     # else:
-#     #     welcome_text = static_text.start_not_created.format(first_name=u.first_name)
-#
-#     welcome_text = static_text.start_created.format(first_name=u.first_name)
-#
-#     # update.message.reply_text(text=text,
-#     #                           reply_markup=make_keyboard_for_start_command())
-#
-#     update.message.reply_text(text=welcome_text)
-#     # time.sleep(1)
-#     update.message.reply_text(text=static_text.start_intro)
-#     # time.sleep(2)
-#
-#     # update.message.reply_text(text=static_text.start_currency, reply_markup=make_keyboard_for_start_currency())
-#     # return CURRENCY
-#
-#     update.message.reply_text(text=start_trade_experience_recommendation_text)
-#     # time.sleep(3)
-#     update.message.reply_text(text=start_help_tune_portfolio_text)
-#     # time.sleep(3)
-#     update.message.reply_text(text=static_text.start_help_tune_portfolio_question_text,
-#                               reply_markup=make_keyboard_for_start_help())
-#     return HELP
+@send_typing_action
+@handler_logging()
+def command_feedback(update, context):
+    try:
+        context.bot.edit_message_reply_markup(chat_id=update.effective_chat.id,
+                                              message_id=(update.effective_message.message_id - 1))
+    except telegram.error.BadRequest:
+        ...
+
+    link = 'https://www.google.com/intl/ru_ua/forms/about/'
+    update.message.reply_text(text=static_text.feedback.format(google_form_link=link))
 
 
 @send_typing_action
