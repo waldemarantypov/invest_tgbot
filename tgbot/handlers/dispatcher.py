@@ -6,27 +6,26 @@ import telegram
 from telegram.ext import (
     Updater, Dispatcher, Filters, PicklePersistence,
     CommandHandler, MessageHandler,
-    InlineQueryHandler, CallbackQueryHandler,
-    ChosenInlineResultHandler, ConversationHandler
+    CallbackQueryHandler,
+    ConversationHandler, Defaults
 )
 
-# from celery.decorators import task  # event processing in async mode
-
 from dtb.settings import TELEGRAM_TOKEN
-
-from tgbot.handlers import admin, commands, files, location
-from tgbot.handlers.commands import broadcast_command_with_message
-from tgbot.handlers.handlers import secret_level, broadcast_decision_handler, modify_button, balance_button, add_stock_button, delete_stock_button, \
-    close_button, modify_to_invest_button, inline_modify_stock_check, inline_modify_stock_shares, \
-    inline_modify_to_invest, \
-    inline_wrong_ticket, inline_modify_stock_total_costs, inline_add_stock_check, inline_wrong_ticket_add_stock, \
-    delete_stock_exact_button, inline_delete_stock_check, inline_wrong_ticket_delete_stock, \
-    portfolio_values_button, update_portfolio, close_conversation
-from tgbot.handlers.manage_data import SECRET_LEVEL_BUTTON, CONFIRM_DECLINE_BROADCAST
-from tgbot.handlers.static_text import broadcast_command
-from tgbot.handlers.commands import CURRENCY, TRADE_EXPERIENCE, HELP, CLOSE_PORTFOLIO, END, INTERESTED_MARK
+from tgbot.handlers import admin, commands, files
 from tgbot.handlers.commands import MODIFY, MODIFY_OPTIONS, BALANCE, TO_INVEST, STOCK_SHARES, STOCK_TOTAL_COSTS, \
     ADD_STOCK, DELETE_STOCK, EXACT_DELETE_STOCK
+from tgbot.handlers.commands import broadcast_command_with_message
+from tgbot.handlers.handlers import broadcast_decision_handler, modify_button, balance_button, add_stock_button, \
+    delete_stock_button, \
+    close_button, modify_to_invest_button, inline_modify_stock_check, inline_modify_stock_shares, \
+    inline_modify_to_invest, \
+    inline_wrong_ticket, inline_modify_stock_total_costs, inline_add_stock_check, delete_stock_exact_button, \
+    inline_delete_stock_check, portfolio_values_button, update_portfolio, close_conversation
+from tgbot.handlers.manage_data import CONFIRM_DECLINE_BROADCAST
+from tgbot.handlers.static_text import broadcast_command
+
+
+# from celery.decorators import task  # event processing in async mode
 
 def setup_dispatcher(dp):
     """
@@ -40,7 +39,8 @@ def setup_dispatcher(dp):
         states={
             MODIFY: [
                 CallbackQueryHandler(modify_button, pattern='^' + 'Modify' + '$'),
-                CallbackQueryHandler(portfolio_values_button, pattern='^' + '(Net|Total|Costs|Efficiency|Amount)' + '$'),
+                CallbackQueryHandler(portfolio_values_button,
+                                     pattern='^' + '(Net|Total|Costs|Efficiency|Amount)' + '$'),
                 CallbackQueryHandler(update_portfolio, pattern='^' + 'Update' + '$'),
             ],
             MODIFY_OPTIONS: [
@@ -60,7 +60,8 @@ def setup_dispatcher(dp):
                 MessageHandler(Filters.regex('^(([0-9]{1,10}\.[0-9]{1,2})|([0-9]{1,10}))$'), inline_modify_to_invest)
             ],
             STOCK_SHARES: [
-                MessageHandler(Filters.regex('^(([0-9]{1,10}\.[0-9]{1,10})|([0-9]{1,10}))$'), inline_modify_stock_shares)
+                MessageHandler(Filters.regex('^(([0-9]{1,10}\.[0-9]{1,10})|([0-9]{1,10}))$'),
+                               inline_modify_stock_shares)
             ],
             STOCK_TOTAL_COSTS: [
                 MessageHandler(Filters.regex('^(([0-9]{1,10}\.[0-9]{1,2})|([0-9]{1,10}))$'),
@@ -94,7 +95,6 @@ def setup_dispatcher(dp):
     )
     dp.add_handler(portfolio_conv_handler, 2)
 
-
     # admin commands
     dp.add_handler(CommandHandler("admin", admin.admin))
     dp.add_handler(CommandHandler("stats", admin.stats))
@@ -107,13 +107,13 @@ def setup_dispatcher(dp):
     # dp.add_handler(CommandHandler("ask_location", location.ask_for_location))
     # dp.add_handler(MessageHandler(Filters.location, location.location_handler))
 
-    #buttons
+    # buttons
 
     # dp.add_handler(CallbackQueryHandler(secret_level, pattern=f"^{SECRET_LEVEL_BUTTON}"))
     dp.add_handler(MessageHandler(Filters.regex(rf'^{broadcast_command} .*'), broadcast_command_with_message))
     dp.add_handler(CallbackQueryHandler(broadcast_decision_handler, pattern=f"^{CONFIRM_DECLINE_BROADCAST}"))
 
-    #EXAMPLES FOR HANDLERS
+    # EXAMPLES FOR HANDLERS
     # dp.add_handler(MessageHandler(Filters.text, <function_handler>))
     # dp.add_handler(MessageHandler(
     #     Filters.document, <function_handler>,
@@ -129,8 +129,10 @@ def setup_dispatcher(dp):
 
 
 def run_pooling():
+    defaults = Defaults(parse_mode=telegram.ParseMode.HTML)
+
     """ Run bot in pooling mode """
-    updater = Updater(TELEGRAM_TOKEN, persistence=my_persistence, use_context=True)
+    updater = Updater(TELEGRAM_TOKEN, persistence=my_persistence, defaults=defaults, use_context=True)
 
     dp = updater.dispatcher
     dp = setup_dispatcher(dp)

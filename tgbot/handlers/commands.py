@@ -38,10 +38,15 @@ def command_start(update, context):
 
     welcome_text = static_text.start_created.format(first_name=u.first_name)
 
+    file = r"tgbot/static/gif/portfolio.mp4"
+    file = open(file, 'rb')
+
+    # welcome_text_full = welcome_text + static_text.start_created_2nd_string
+    # context.bot.sendAnimation(chat_id=update.effective_chat.id, animation=file, caption=welcome_text_full)
+
+    update.message.reply_animation(animation=file, caption="⬆️ Вот так будет выглядеть портфель ⬆️")
     update.message.reply_text(text=welcome_text)
-
     update.message.reply_text(text=static_text.start_created_2nd_string)
-
 
     # broadcast_message_rate_bot_pls.apply_async(args=(u.user_id,), countdown=100)
 

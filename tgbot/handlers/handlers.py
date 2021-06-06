@@ -190,7 +190,12 @@ def modify_to_invest_button(update, context):
     user = User.get_user(update, context)
     to_invest = Portfolio.get_or_create_by_user(user).to_invest
     text = change_to_invest_text.format(to_invest=to_invest)
-    query.edit_message_text(text=text)
+
+    query.delete_message()
+
+    file = r"tgbot/static/gif/edit_to_invest.gif.mp4"
+    file = open(file, 'rb')
+    context.bot.sendAnimation(chat_id=update.effective_chat.id, animation=file, caption=text)
 
     return TO_INVEST
 
