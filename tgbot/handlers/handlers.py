@@ -114,7 +114,6 @@ def update_portfolio(update, context):
     return MODIFY
 
 
-@send_typing_action
 @handler_logging()
 def modify_button(update, context):
     try:
@@ -128,7 +127,7 @@ def modify_button(update, context):
                             reply_markup=make_keyboard_for_modify_options())
     return MODIFY_OPTIONS
 
-@send_typing_action
+
 @handler_logging()
 def back_to_modify_button(update, context):
     try:
@@ -184,7 +183,6 @@ def balance_button_edit(update, context):
     context.bot.sendAnimation(chat_id=update.effective_chat.id, animation=file, caption=caption,
                               reply_markup=make_keyboard_for_modify_to_invest_or_back())
 
-
     return BALANCE
 
 
@@ -234,6 +232,8 @@ def balance_button_delete(update, context):
                               reply_markup=make_keyboard_for_modify_to_invest_or_back())
 
     return DELETE_STOCK
+
+
 '''
 Portfolio
 Second menu
@@ -412,14 +412,12 @@ def inline_wrong_ticket_delete(update, context):
     return balance_button_delete(update, context)
 
 
-@send_typing_action
 @handler_logging()
 def inline_wrong_stock_shares(update, context):
     context.bot.sendMessage(chat_id=update.effective_chat.id, text=modify_wrong_stock_parameters)
     return STOCK_SHARES
 
 
-@send_typing_action
 @handler_logging()
 def inline_wrong_stock_costs(update, context):
     context.bot.sendMessage(chat_id=update.effective_chat.id, text=modify_wrong_stock_parameters)
@@ -557,7 +555,6 @@ def delete_stock_exact_button(update, context):
     return balance_button_delete(update, context)
 
 
-@send_typing_action
 @handler_logging()
 def inline_wrong_ticket_delete_stock(update, context):
     context.bot.sendMessage(chat_id=update.effective_chat.id, text=delete_wrong_ticket)
@@ -580,7 +577,6 @@ Button: Close
 '''
 
 
-@send_typing_action
 @handler_logging()
 def close_button(update, context):
     query = update.callback_query
