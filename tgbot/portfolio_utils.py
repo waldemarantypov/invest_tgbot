@@ -1,4 +1,6 @@
 from datetime import date
+
+from tgbot.handlers import static_text
 from tgbot.handlers.static_text import to_invest_text, total_portfolio
 import requests
 
@@ -51,13 +53,12 @@ def output_style(output):
 
 
 def portfolio_output_net(portfolio, stocks):
-    f = to_invest_text
-    s = str(portfolio.to_invest)
+    # f = to_invest_text
+    # s = str(portfolio.to_invest)
+    # output_text = string_format(f, s)
 
+    output_text = static_text.portfolio_head
     c3 = ('–' * 30) + '\n'
-
-    output_text = string_format(f, s)
-
     output_text += c3
 
     f = 'Stock'
@@ -90,13 +91,12 @@ def portfolio_output_net(portfolio, stocks):
 
 
 def portfolio_output_total(portfolio, stocks):
-    f = to_invest_text
-    s = str(portfolio.to_invest)
+    # f = to_invest_text
+    # s = str(portfolio.to_invest)
+    # output_text = string_format(f, s)
 
+    output_text = static_text.portfolio_head
     c3 = ('–' * 30) + '\n'
-
-    output_text = string_format(f, s)
-
     output_text += c3
 
     f = 'Stock'
@@ -129,13 +129,12 @@ def portfolio_output_total(portfolio, stocks):
 
 
 def portfolio_output_costs(portfolio, stocks):
-    f = to_invest_text
-    s = str(portfolio.to_invest)
+    # f = to_invest_text
+    # s = str(portfolio.to_invest)
+    # output_text = string_format(f, s)
 
+    output_text = static_text.portfolio_head
     c3 = ('–' * 30) + '\n'
-
-    output_text = string_format(f, s)
-
     output_text += c3
 
     f = 'Stock'
@@ -168,13 +167,12 @@ def portfolio_output_costs(portfolio, stocks):
 
 
 def portfolio_output_amount(portfolio, stocks):
-    f = to_invest_text
-    s = str(portfolio.to_invest)
+    # f = to_invest_text
+    # s = str(portfolio.to_invest)
+    # output_text = string_format(f, s)
 
+    output_text = static_text.portfolio_head
     c3 = ('–' * 30) + '\n'
-
-    output_text = string_format(f, s)
-
     output_text += c3
 
     f = 'Stock'
@@ -207,13 +205,12 @@ def portfolio_output_amount(portfolio, stocks):
 
 
 def portfolio_output_efficiency(portfolio, stocks):
-    f = to_invest_text
-    s = str(portfolio.to_invest)
+    # f = to_invest_text
+    # s = str(portfolio.to_invest)
+    # output_text = string_format(f, s)
 
+    output_text = static_text.portfolio_head
     c3 = ('–' * 30) + '\n'
-
-    output_text = string_format(f, s)
-
     output_text += c3
 
     f = 'Stock'

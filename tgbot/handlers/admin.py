@@ -21,7 +21,7 @@ def stats(update, context):
     """ Show help info about all secret admins commands """
     u = User.get_user(update, context)
     if not u.is_admin:
-        return
+        return update.message.reply_text(static_text.not_admin_answer)
 
     text = f"""
 *Users*: {User.objects.count()}
@@ -33,4 +33,3 @@ def stats(update, context):
         parse_mode=telegram.ParseMode.MARKDOWN,
         disable_web_page_preview=True,
     )
-    

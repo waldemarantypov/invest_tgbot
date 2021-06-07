@@ -1,7 +1,7 @@
 import datetime
 import re
 
-from pathlib import Path
+import os
 
 import telegram
 from django.utils import timezone
@@ -20,7 +20,7 @@ from tgbot.utils import extract_user_data_from_update
 CURRENCY, TRADE_EXPERIENCE, HELP, CLOSE_PORTFOLIO, INTERESTED_MARK = range(5)
 
 MODIFY, MODIFY_OPTIONS, BALANCE, TO_INVEST, STOCK_SHARES, \
-STOCK_TOTAL_COSTS, ADD_STOCK, DELETE_STOCK, EXACT_DELETE_STOCK = range(66, 75)
+STOCK_TOTAL_COSTS, ADD_STOCK, EDIT_STOCK, DELETE_STOCK, EXACT_DELETE_STOCK = range(66, 76)
 
 END = ConversationHandler.END
 
@@ -44,9 +44,10 @@ def command_start(update, context):
     # welcome_text_full = welcome_text + static_text.start_created_2nd_string
     # context.bot.sendAnimation(chat_id=update.effective_chat.id, animation=file, caption=welcome_text_full)
 
-    update.message.reply_animation(animation=file, caption=welcome_text + "⬆️ Вот так будет выглядеть портфель ⬆️")
-    # update.message.reply_text(text=welcome_text)
-    update.message.reply_text(text=static_text.start_created_2nd_string)
+    welcome_text_full = welcome_text + static_text.start_created_portfolio + static_text.start_created_portfolio_example
+    update.message.reply_text(text=welcome_text_full)
+    update.message.reply_animation(animation=file)
+    update.message.reply_text(text=static_text.start_created_feedback)
 
     # broadcast_message_rate_bot_pls.apply_async(args=(u.user_id,), countdown=100)
 
@@ -60,7 +61,8 @@ def command_feedback(update, context):
     except telegram.error.BadRequest:
         ...
 
-    link = 'https://www.google.com/intl/ru_ua/forms/about/'
+    # link = 'https://www.google.com/intl/ru_ua/forms/about/'
+    link = os.getenv("GOOGLE_FORM_LINK")
     update.message.reply_text(text=static_text.feedback.format(google_form_link=link))
 
 

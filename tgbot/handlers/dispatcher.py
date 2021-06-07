@@ -13,14 +13,16 @@ from telegram.ext import (
 from dtb.settings import TELEGRAM_TOKEN
 from tgbot.handlers import admin, commands, files
 from tgbot.handlers.commands import MODIFY, MODIFY_OPTIONS, BALANCE, TO_INVEST, STOCK_SHARES, STOCK_TOTAL_COSTS, \
-    ADD_STOCK, DELETE_STOCK, EXACT_DELETE_STOCK
+    ADD_STOCK, EDIT_STOCK, DELETE_STOCK, EXACT_DELETE_STOCK
 from tgbot.handlers.commands import broadcast_command_with_message
-from tgbot.handlers.handlers import broadcast_decision_handler, modify_button, balance_button, add_stock_button, \
-    delete_stock_button, \
-    close_button, modify_to_invest_button, inline_modify_stock_check, inline_modify_stock_shares, \
+from tgbot.handlers.handlers import broadcast_decision_handler, modify_button, \
+    close_button, inline_modify_stock_check, inline_modify_stock_shares, \
     inline_modify_to_invest, \
-    inline_wrong_ticket, inline_modify_stock_total_costs, inline_add_stock_check, delete_stock_exact_button, \
-    inline_delete_stock_check, portfolio_values_button, update_portfolio, close_conversation
+    inline_modify_stock_total_costs, inline_add_stock_check, delete_stock_exact_button, \
+    inline_delete_stock_check, portfolio_values_button, update_portfolio, close_conversation, \
+    inline_wrong_ticket_delete, balance_button_edit, inline_wrong_ticket_add, inline_wrong_ticket_edit, \
+    inline_wrong_stock_shares, inline_wrong_stock_costs, balance_button_add, balance_button_delete, \
+    back_to_modify_button
 from tgbot.handlers.manage_data import CONFIRM_DECLINE_BROADCAST
 from tgbot.handlers.static_text import broadcast_command
 
@@ -44,43 +46,42 @@ def setup_dispatcher(dp):
                 CallbackQueryHandler(update_portfolio, pattern='^' + 'Update' + '$'),
             ],
             MODIFY_OPTIONS: [
-                CallbackQueryHandler(balance_button, pattern='^' + 'Change Balance' + '$'),
-                CallbackQueryHandler(add_stock_button, pattern='^' + 'Add Stock' + '$'),
-                CallbackQueryHandler(delete_stock_button, pattern='^' + 'Delete Stock' + '$'),
+                CallbackQueryHandler(balance_button_edit, pattern='^' + 'Change Balance' + '$'),
+                CallbackQueryHandler(balance_button_add, pattern='^' + 'Add Stock' + '$'),
+                CallbackQueryHandler(balance_button_delete, pattern='^' + 'Delete Stock' + '$'),
                 CallbackQueryHandler(close_button, pattern='^' + 'Close' + '$')
             ],
             BALANCE: [
-                CallbackQueryHandler(modify_to_invest_button, pattern='^' + 'Change To invest' + '$'),
-                CallbackQueryHandler(modify_button, pattern='^' + 'Back to Modify Options' + '$'),
+                # CallbackQueryHandler(modify_to_invest_button, pattern='^' + 'Change To invest' + '$'),
+                CallbackQueryHandler(back_to_modify_button, pattern='^' + 'Back to Modify Options' + '$'),
                 MessageHandler(Filters.regex('^(([a-zA-Z0-9]{3,6})|([a-zA-Z0-9]{3,6}((\.)|(\-))([a-zA-Z0-9]{1,4})))$'),
                                inline_modify_stock_check),
-                MessageHandler((~ Filters.command), inline_wrong_ticket)
+                MessageHandler((~ Filters.command), inline_wrong_ticket_edit)
             ],
-            TO_INVEST: [
-                MessageHandler(Filters.regex('^(([0-9]{1,10}\.[0-9]{1,2})|([0-9]{1,10}))$'), inline_modify_to_invest)
-            ],
+            # TO_INVEST: [
+            #     MessageHandler(Filters.regex('^(([0-9]{1,10}\.[0-9]{1,2})|([0-9]{1,10}))$'), inline_modify_to_invest)
+            # ],
             STOCK_SHARES: [
                 MessageHandler(Filters.regex('^(([0-9]{1,10}\.[0-9]{1,10})|([0-9]{1,10}))$'),
-                               inline_modify_stock_shares)
+                               inline_modify_stock_shares),
+                MessageHandler((~ Filters.command), inline_wrong_stock_shares)
             ],
             STOCK_TOTAL_COSTS: [
                 MessageHandler(Filters.regex('^(([0-9]{1,10}\.[0-9]{1,2})|([0-9]{1,10}))$'),
-                               inline_modify_stock_total_costs)
+                               inline_modify_stock_total_costs),
+                MessageHandler((~ Filters.command), inline_wrong_stock_costs)
             ],
             ADD_STOCK: [
-                CallbackQueryHandler(modify_button, pattern='^' + 'Back to Modify Options' + '$'),
+                CallbackQueryHandler(back_to_modify_button, pattern='^' + 'Back to Modify Options' + '$'),
                 MessageHandler(Filters.regex('^(([a-zA-Z0-9]{3,6})|([a-zA-Z0-9]{3,6}((\.)|(\-))([a-zA-Z0-9]{1,4})))$'),
                                inline_add_stock_check),
-                MessageHandler((~ Filters.command), inline_wrong_ticket)
+                MessageHandler((~ Filters.command), inline_wrong_ticket_add)
             ],
-            # INTERESTED_MARK: [
-            #     CallbackQueryHandler(mark_interested_button, pattern='^' + '[1-5]' + '$'),
-            # ],
             DELETE_STOCK: [
-                CallbackQueryHandler(modify_button, pattern='^' + 'Back to Modify Options' + '$'),
+                CallbackQueryHandler(back_to_modify_button, pattern='^' + 'Back to Modify Options' + '$'),
                 MessageHandler(Filters.regex('^^(([a-zA-Z0-9]{3,6})|([a-zA-Z0-9]{3,6}((\.)|(\-))([a-zA-Z0-9]{1,4})))$'),
                                inline_delete_stock_check),
-                MessageHandler((~ Filters.command), inline_wrong_ticket)
+                MessageHandler((~ Filters.command), inline_wrong_ticket_delete)
             ],
             EXACT_DELETE_STOCK: [
                 CallbackQueryHandler(delete_stock_exact_button, pattern='^(Yes|No)$'),
@@ -99,9 +100,9 @@ def setup_dispatcher(dp):
     dp.add_handler(CommandHandler("admin", admin.admin))
     dp.add_handler(CommandHandler("stats", admin.stats))
 
-    dp.add_handler(MessageHandler(
-        Filters.animation, files.show_file_id,
-    ))
+    # dp.add_handler(MessageHandler(
+    #     Filters.animation, files.show_file_id,
+    # ))
 
     # location
     # dp.add_handler(CommandHandler("ask_location", location.ask_for_location))

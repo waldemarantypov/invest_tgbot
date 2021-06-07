@@ -78,8 +78,8 @@ def make_keyboard_for_portfolio_efficiency():
 
 def make_keyboard_for_modify_options():
     buttons = [
-        [InlineKeyboardButton(balance_button, callback_data='Change Balance')],
         [InlineKeyboardButton(add_stock_button, callback_data='Add Stock')],
+        [InlineKeyboardButton(balance_button, callback_data='Change Balance')],
         [InlineKeyboardButton(delete_stock_button, callback_data='Delete Stock')],
         [InlineKeyboardButton(close_button, callback_data='Close')],
     ]
@@ -89,7 +89,7 @@ def make_keyboard_for_modify_options():
 
 def make_keyboard_for_modify_to_invest_or_back():
     buttons = [
-        [InlineKeyboardButton(modify_to_invest_button, callback_data='Change To invest')],
+        # [InlineKeyboardButton(modify_to_invest_button, callback_data='Change To invest')],
         [InlineKeyboardButton(back_to_modify_button, callback_data='Back to Modify Options')],
     ]
 

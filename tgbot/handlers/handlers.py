@@ -17,13 +17,13 @@ from tgbot.handlers.keyboard_utils import make_keyboard_for_modify_options, make
     make_keyboard_for_portfolio_net, make_keyboard_for_portfolio_costs, make_keyboard_for_portfolio_amount,\
     make_keyboard_for_portfolio_efficiency
 from tgbot.handlers.manage_data import CONFIRM_DECLINE_BROADCAST, CONFIRM_BROADCAST
-from tgbot.handlers.static_text import unlock_secret_room, message_is_sent, modify_question, change_balance_text,\
+from tgbot.handlers.static_text import unlock_secret_room, message_is_sent, modify_question, change_balance_text, \
     change_to_invest_text, changed_to_invest_text, modify_wrong_ticket, \
     modify_balance_stock_not_in_portfolio, modify_balance_stock_symbol_shares, modify_balance_stock_shares_success, \
     change_balance_text_stock_write, close_modify_menu_portfolio, modify_balance_stock_total_costs_success, \
-    add_stock_text, add_stock_symbol_check_already_have, add_stock_symbol_check_success, add_stock_not_in_yfinance,\
-    delete_stock_text, delete_stock_write, delete_stock_info, delete_stock_success, delete_stock_cancel,\
-    add_wrong_ticket, delete_wrong_ticket, add_stock_write, wait_update
+    add_stock_text, add_stock_symbol_check_already_have, add_stock_symbol_check_success, add_stock_not_in_yfinance, \
+    delete_stock_text, delete_stock_write, delete_stock_info, delete_stock_success, delete_stock_cancel, \
+    add_wrong_ticket, delete_wrong_ticket, add_stock_write, wait_update, modify_wrong_stock_parameters
 from tgbot.handlers.utils import handler_logging, send_typing_action
 from tgbot.models import User, Portfolio, Stock
 from tgbot.portfolio_utils import portfolio_output_net, portfolio_output_total, \
@@ -117,16 +117,27 @@ def update_portfolio(update, context):
 @send_typing_action
 @handler_logging()
 def modify_button(update, context):
-    query = update.callback_query
+    try:
+        query = update.callback_query
+        query.answer()
+        query.edit_message_reply_markup()
+    except:
+        ...
 
-    query.answer()
-
-    #query.edit_message_text(text=modify_question, reply_markup=make_keyboard_for_modify_options())
-    query.edit_message_reply_markup()
     context.bot.sendMessage(chat_id=update.effective_chat.id, text=modify_question,
                             reply_markup=make_keyboard_for_modify_options())
     return MODIFY_OPTIONS
 
+@send_typing_action
+@handler_logging()
+def back_to_modify_button(update, context):
+    try:
+        query = update.callback_query
+        query.answer()
+        query.delete_message()
+    except:
+        ...
+    return modify_button(update, context)
 
 """
 END
@@ -154,24 +165,75 @@ Options - 2 buttons(modify to invest, go back to modify button(in dispatcher)) a
 
 @send_typing_action
 @handler_logging()
-def balance_button(update, context):
+def balance_button_edit(update, context):
     try:
         query = update.callback_query
         query.answer()
         query.delete_message()
-    except AttributeError:
+    except:
         ...
 
     # context.bot.sendMessage(chat_id=update.effective_chat.id, text=change_balance_text,
     #                         reply_markup=make_keyboard_for_modify_to_invest_or_back())
 
-    file = r"tgbot/static/gif/edit_stock.gif.mp4"
+    file = r"tgbot/static/gif/edit_stock.mp4"
     file = open(file, 'rb')
-    context.bot.sendAnimation(chat_id=update.effective_chat.id, animation=file, caption=change_balance_text,
+
+    caption = change_balance_text
+
+    context.bot.sendAnimation(chat_id=update.effective_chat.id, animation=file, caption=caption,
                               reply_markup=make_keyboard_for_modify_to_invest_or_back())
+
 
     return BALANCE
 
+
+@send_typing_action
+@handler_logging()
+def balance_button_add(update, context):
+    try:
+        query = update.callback_query
+        query.answer()
+        query.delete_message()
+    except:
+        ...
+
+    # context.bot.sendMessage(chat_id=update.effective_chat.id, text=add_stock_text,
+    #                         reply_markup=make_keyboard_for_modify_to_invest_or_back())
+
+    file = r"tgbot/static/gif/add_stock.mp4"
+    file = open(file, 'rb')
+
+    caption = add_stock_text
+
+    context.bot.sendAnimation(chat_id=update.effective_chat.id, animation=file, caption=caption,
+                              reply_markup=make_keyboard_for_modify_to_invest_or_back())
+
+    return ADD_STOCK
+
+
+@send_typing_action
+@handler_logging()
+def balance_button_delete(update, context):
+    try:
+        query = update.callback_query
+        query.answer()
+        query.delete_message()
+    except:
+        ...
+
+    # context.bot.sendMessage(chat_id=update.effective_chat.id, text=delete_stock_text,
+    #                         reply_markup=make_keyboard_for_modify_to_invest_or_back())
+
+    file = r"tgbot/static/gif/delete_stock.mp4"
+    file = open(file, 'rb')
+
+    caption = delete_stock_text
+
+    context.bot.sendAnimation(chat_id=update.effective_chat.id, animation=file, caption=caption,
+                              reply_markup=make_keyboard_for_modify_to_invest_or_back())
+
+    return DELETE_STOCK
 '''
 Portfolio
 Second menu
@@ -180,24 +242,24 @@ Button: modify to invest
 '''
 
 
-@send_typing_action
-@handler_logging()
-def modify_to_invest_button(update, context):
-    query = update.callback_query
-
-    query.answer()
-
-    user = User.get_user(update, context)
-    to_invest = Portfolio.get_or_create_by_user(user).to_invest
-    text = change_to_invest_text.format(to_invest=to_invest)
-
-    query.delete_message()
-
-    file = r"tgbot/static/gif/edit_to_invest.gif.mp4"
-    file = open(file, 'rb')
-    context.bot.sendAnimation(chat_id=update.effective_chat.id, animation=file, caption=text)
-
-    return TO_INVEST
+# @send_typing_action
+# @handler_logging()
+# def modify_to_invest_button(update, context):
+#     query = update.callback_query
+#
+#     query.answer()
+#
+#     user = User.get_user(update, context)
+#     to_invest = Portfolio.get_or_create_by_user(user).to_invest
+#     text = change_to_invest_text.format(to_invest=to_invest)
+#
+#     query.delete_message()
+#
+#     file = r"tgbot/static/gif/edit_to_invest.gif.mp4"
+#     file = open(file, 'rb')
+#     context.bot.sendAnimation(chat_id=update.effective_chat.id, animation=file, caption=text)
+#
+#     return TO_INVEST
 
 
 @send_typing_action
@@ -240,6 +302,11 @@ Inline: modify stock check
 @send_typing_action
 @handler_logging()
 def inline_modify_stock_check(update, context):
+    try:
+        context.bot.edit_message_reply_markup(chat_id=update.effective_chat.id,
+                                              message_id=(update.effective_message.message_id - 1))
+    except telegram.error.BadRequest:
+        ...
     stock = update.message.text.upper()
     u = User.get_user(update, context)
     p = Portfolio.get_or_create_by_user(u)
@@ -260,7 +327,7 @@ def inline_modify_stock_check(update, context):
     else:
         context.bot.sendMessage(chat_id=update.effective_chat.id, text=modify_balance_stock_not_in_portfolio)
         time.sleep(2)
-        return balance_button(update, context)
+        return balance_button_edit(update, context)
 
 
 @send_typing_action
@@ -285,9 +352,9 @@ def inline_modify_stock_total_costs(update, context):
                                                                               shares=stock.shares))
     time.sleep(2)
     if context.user_data['changing_status(new_stock_or_already_existed)'] == 'already_existed':
-        return balance_button(update, context)
+        return balance_button_edit(update, context)
     elif context.user_data['changing_status(new_stock_or_already_existed)'] == 'new_stock':
-        return add_stock_button(update, context)
+        return balance_button_add(update, context)
 
 
 '''
@@ -308,10 +375,55 @@ Inline: wrong inline
 
 @send_typing_action
 @handler_logging()
-def inline_wrong_ticket(update, context):
+def inline_wrong_ticket_add(update, context):
+    try:
+        context.bot.edit_message_reply_markup(chat_id=update.effective_chat.id,
+                                              message_id=(update.effective_message.message_id - 1))
+    except telegram.error.BadRequest:
+        ...
     context.bot.sendMessage(chat_id=update.effective_chat.id, text=modify_wrong_ticket)
     time.sleep(2)
-    return balance_button(update, context)
+    return balance_button_add(update, context)
+
+
+@send_typing_action
+@handler_logging()
+def inline_wrong_ticket_edit(update, context):
+    try:
+        context.bot.edit_message_reply_markup(chat_id=update.effective_chat.id,
+                                              message_id=(update.effective_message.message_id - 1))
+    except telegram.error.BadRequest:
+        ...
+    context.bot.sendMessage(chat_id=update.effective_chat.id, text=modify_wrong_ticket)
+    time.sleep(2)
+    return balance_button_edit(update, context)
+
+
+@send_typing_action
+@handler_logging()
+def inline_wrong_ticket_delete(update, context):
+    try:
+        context.bot.edit_message_reply_markup(chat_id=update.effective_chat.id,
+                                              message_id=(update.effective_message.message_id - 1))
+    except telegram.error.BadRequest:
+        ...
+    context.bot.sendMessage(chat_id=update.effective_chat.id, text=modify_wrong_ticket)
+    time.sleep(2)
+    return balance_button_delete(update, context)
+
+
+@send_typing_action
+@handler_logging()
+def inline_wrong_stock_shares(update, context):
+    context.bot.sendMessage(chat_id=update.effective_chat.id, text=modify_wrong_stock_parameters)
+    return STOCK_SHARES
+
+
+@send_typing_action
+@handler_logging()
+def inline_wrong_stock_costs(update, context):
+    context.bot.sendMessage(chat_id=update.effective_chat.id, text=modify_wrong_stock_parameters)
+    return STOCK_TOTAL_COSTS
 
 
 '''
@@ -342,26 +454,12 @@ Options - 1 button(go back to modify button(in dispatcher)) and 2 inlines(add_st
 
 @send_typing_action
 @handler_logging()
-def add_stock_button(update, context):
-    file = r"tgbot/static/gif/add_stock.gif.mp4"
-    file = open(file, 'rb')
-    try:
-        query = update.callback_query
-        query.answer()
-        query.delete_message()
-    except AttributeError:
-        ...
-
-    file = r"tgbot/static/gif/add_stock.gif.mp4"
-    file = open(file, 'rb')
-    context.bot.sendAnimation(chat_id=update.effective_chat.id, animation=file, caption=add_stock_text,
-                              reply_markup=make_keyboard_for_add_stock_go_back())
-    return ADD_STOCK
-
-
-@send_typing_action
-@handler_logging()
 def inline_add_stock_check(update, context):
+    try:
+        context.bot.edit_message_reply_markup(chat_id=update.effective_chat.id,
+                                              message_id=(update.effective_message.message_id - 1))
+    except telegram.error.BadRequest:
+        ...
     stock = update.message.text.upper()
     u = User.get_user(update, context)
     p = Portfolio.get_or_create_by_user(u)
@@ -374,7 +472,7 @@ def inline_add_stock_check(update, context):
 
         update.message.reply_text(add_stock_symbol_check_already_have.format(symbol=s.symbol, shares=s.shares))
         time.sleep(2)
-        return add_stock_button(update, context)
+        return balance_button_add(update, context)
     else:
         try:
             ticker_price = yf.Ticker(stock).info['regularMarketPrice']
@@ -386,15 +484,7 @@ def inline_add_stock_check(update, context):
         except KeyError:
             context.bot.sendMessage(chat_id=update.effective_chat.id, text=add_stock_not_in_yfinance)
             time.sleep(2)
-            return add_stock_button(update, context)
-
-
-@send_typing_action
-@handler_logging()
-def inline_wrong_ticket_add_stock(update, context):
-    context.bot.sendMessage(chat_id=update.effective_chat.id, text=add_wrong_ticket)
-    time.sleep(2)
-    return add_stock_button(update, context)
+            return balance_button_add(update, context)
 
 
 '''
@@ -417,42 +507,12 @@ Options - 1 button(go back to modify button(in dispatcher)) and 2 inlines(add_st
 
 @send_typing_action
 @handler_logging()
-def delete_stock_button(update, context):
-    file = r"tgbot/static/gif/delete_stock.gif.mp4"
-    file = open(file, 'rb')
-    try:
-        if context.user_data['already_visit_delete_stock']:
-            # context.bot.sendMessage(chat_id=update.effective_chat.id, text=delete_stock_text,
-            #                         reply_markup=make_keyboard_for_add_stock_go_back())
-            context.bot.sendAnimation(chat_id=update.effective_chat.id, animation=file, caption=delete_stock_text,
-                                      reply_markup=make_keyboard_for_add_stock_go_back())
-        else:
-            query = update.callback_query
-            query.answer()
-            # query.edit_message_text(text=delete_stock_text, reply_markup=make_keyboard_for_add_stock_go_back())
-            query.delete_message()
-            context.bot.sendAnimation(chat_id=update.effective_chat.id, animation=file, caption=delete_stock_text,
-                                      reply_markup=make_keyboard_for_add_stock_go_back())
-    except AttributeError:
-        # context.bot.sendMessage(chat_id=update.effective_chat.id, text=delete_stock_text,
-        #                         reply_markup=make_keyboard_for_add_stock_go_back())
-        context.bot.sendAnimation(chat_id=update.effective_chat.id, animation=file, caption=delete_stock_text,
-                                  reply_markup=make_keyboard_for_add_stock_go_back())
-    except KeyError:
-        query = update.callback_query
-        query.answer()
-        # query.edit_message_text(text=delete_stock_text, reply_markup=make_keyboard_for_add_stock_go_back())
-        query.delete_message()
-        context.bot.sendAnimation(chat_id=update.effective_chat.id, animation=file, caption=delete_stock_text,
-                                  reply_markup=make_keyboard_for_add_stock_go_back())
-
-    context.user_data['already_visit_delete_stock'] = False
-    return DELETE_STOCK
-
-
-@send_typing_action
-@handler_logging()
 def inline_delete_stock_check(update, context):
+    try:
+        context.bot.edit_message_reply_markup(chat_id=update.effective_chat.id,
+                                              message_id=(update.effective_message.message_id - 1))
+    except telegram.error.BadRequest:
+        ...
     stock = update.message.text.upper()
     u = User.get_user(update, context)
     p = Portfolio.get_or_create_by_user(u)
@@ -472,8 +532,8 @@ def inline_delete_stock_check(update, context):
         return EXACT_DELETE_STOCK
     else:
         context.bot.sendMessage(chat_id=update.effective_chat.id, text=modify_balance_stock_not_in_portfolio)
-        time.sleep(2)
-        return delete_stock_button(update, context)
+        time.sleep(3)
+        return balance_button_delete(update, context)
 
 
 @send_typing_action
@@ -491,16 +551,17 @@ def delete_stock_exact_button(update, context):
         text = delete_stock_cancel.format(symbol=stock.symbol)
 
     context.user_data['already_visit_delete_stock'] = True
-    query.edit_message_text(text=text)
+    query.delete_message()
+    context.bot.sendMessage(chat_id=update.effective_chat.id, text=text)
     time.sleep(2)
-    return delete_stock_button(update, context)
+    return balance_button_delete(update, context)
 
 
 @send_typing_action
 @handler_logging()
 def inline_wrong_ticket_delete_stock(update, context):
     context.bot.sendMessage(chat_id=update.effective_chat.id, text=delete_wrong_ticket)
-    return delete_stock_button(update, context)
+    return balance_button_delete(update, context)
 
 
 '''
