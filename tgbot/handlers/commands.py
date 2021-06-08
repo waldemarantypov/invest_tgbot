@@ -1,5 +1,6 @@
 import datetime
 import re
+import time
 
 import os
 
@@ -8,6 +9,7 @@ from django.utils import timezone
 from telegram.ext import (
     ConversationHandler
 )
+from telegram.utils import helpers
 
 from tgbot.handlers import static_text
 from tgbot.handlers.keyboard_utils import keyboard_confirm_decline_broadcasting, make_keyboard_for_portfolio_net
@@ -41,14 +43,25 @@ def command_start(update, context):
     file = r"tgbot/static/gif/portfolio.mp4"
     file = open(file, 'rb')
 
+    bot = context.bot
+    url = helpers.create_deep_linked_url(bot.username, payload=str(u.user_id), group=False)
+
     # welcome_text_full = welcome_text + static_text.start_created_2nd_string
     # context.bot.sendAnimation(chat_id=update.effective_chat.id, animation=file, caption=welcome_text_full)
 
     welcome_text_full = welcome_text + static_text.start_created_portfolio + static_text.start_created_portfolio_example
     update.message.reply_text(text=welcome_text_full)
     update.message.reply_animation(animation=file)
-    update.message.reply_text(text=static_text.start_created_feedback)
+    time.sleep(3)
+    text = static_text.start_created_feedback + static_text.start_created_share_command
+    update.message.reply_text(text=text)
 
+    # update.message.reply_text(text=static_text.start_created_feedback)
+    # update.message.reply_text(text=static_text.start_created_share.format(share_url=url))
+    # update.message.reply_text(text=static_text.start_created_share_command)
+
+    time.sleep(4)
+    update.message.reply_text(text=static_text.start_created_inbaze)
     # broadcast_message_rate_bot_pls.apply_async(args=(u.user_id,), countdown=100)
 
 
@@ -136,3 +149,12 @@ def broadcast_command_with_message(update, context):
             text=text_error,
             chat_id=user_id
         )
+
+
+def command_share_bot(update, context):
+    update.message.reply_text(text=static_text.share_command)
+    u = User.get_user(update, context)
+    bot = context.bot
+    url = helpers.create_deep_linked_url(bot.username, payload=str(u.user_id), group=False)
+    text = static_text.share_message.format(share_url=url)
+    update.message.reply_text(text=text)

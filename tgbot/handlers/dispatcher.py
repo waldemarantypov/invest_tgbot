@@ -35,6 +35,7 @@ def setup_dispatcher(dp):
     """
     dp.add_handler(CommandHandler("start", commands.command_start))
     dp.add_handler(CommandHandler("feedback", commands.command_feedback))
+    dp.add_handler(CommandHandler("share", commands.command_share_bot))
 
     portfolio_conv_handler = ConversationHandler(
         entry_points=[CommandHandler('portfolio', commands.command_portfolio)],
