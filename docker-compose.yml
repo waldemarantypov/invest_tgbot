@@ -7,7 +7,7 @@ services:
     container_name: postgres
     restart: always
     volumes:
-      - ./postgres/postgres_data:/var/lib/postgresql
+      - postgres_data:/var/lib/postgresql/data/
       - ./db.sql:/docker-entrypoint-initdb.d/db.sql
     env_file:
       - ./.env
@@ -80,4 +80,6 @@ services:
 
 volumes:
   postgres_data:
+    external: true
+    name: invest_tgbot_postgres_data
   redis-data:
