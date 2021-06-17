@@ -80,5 +80,6 @@ services:
 
 volumes:
   postgres_data:
-    external: true
+    external:
+      name: invest_tgbot_postgres_data
   redis-data:
