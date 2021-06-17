@@ -79,7 +79,7 @@ services:
       - .:/code
 
 volumes:
-  postgres_data:
+  postgres:
     external:
       name: invest_tgbot_postgres_data
   redis-data:
