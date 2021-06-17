@@ -79,5 +79,5 @@ services:
       - .:/code
 
 volumes:
-  postgres:
+  postgres-data:
   redis-data:
