@@ -17,17 +17,19 @@ from tgbot.handlers.commands import MODIFY, MODIFY_OPTIONS, BALANCE, TO_INVEST, 
 from tgbot.handlers.commands import broadcast_command_with_message
 from tgbot.handlers.handlers import broadcast_decision_handler, modify_button, \
     close_button, inline_modify_stock_check, inline_modify_stock_shares, \
-    inline_modify_to_invest, \
     inline_modify_stock_total_costs, inline_add_stock_check, delete_stock_exact_button, \
     inline_delete_stock_check, portfolio_values_button, update_portfolio, close_conversation, \
     inline_wrong_ticket_delete, balance_button_edit, inline_wrong_ticket_add, inline_wrong_ticket_edit, \
     inline_wrong_stock_shares, inline_wrong_stock_costs, balance_button_add, balance_button_delete, \
-    back_to_modify_button
+    back_to_modify_button, language_changer, wrong_command_entered
 from tgbot.handlers.manage_data import CONFIRM_DECLINE_BROADCAST
-from tgbot.handlers.static_text import broadcast_command
+from tgbot.handlers.text_ru import broadcast_command
 
 
 # from celery.decorators import task  # event processing in async mode
+
+# not_commands_pattern = '^' + '(?!(\/portfolio|\/share|\/feedback|\/stats|\/admin|\/language)).*' + '$'
+not_commands_pattern = '^' + '(\/start|\/portfolio|\/share|\/feedback|\/stats|\/admin|\/language)' + '$'
 
 def setup_dispatcher(dp):
     """
@@ -36,6 +38,9 @@ def setup_dispatcher(dp):
     dp.add_handler(CommandHandler("start", commands.command_start))
     dp.add_handler(CommandHandler("feedback", commands.command_feedback))
     dp.add_handler(CommandHandler("share", commands.command_share_bot))
+    dp.add_handler(CommandHandler("language", commands.command_language))
+    dp.add_handler(CallbackQueryHandler(language_changer,
+                                        pattern='^' + '(en|ru)' + '$'))
 
     portfolio_conv_handler = ConversationHandler(
         entry_points=[CommandHandler('portfolio', commands.command_portfolio)],
@@ -55,9 +60,10 @@ def setup_dispatcher(dp):
             BALANCE: [
                 # CallbackQueryHandler(modify_to_invest_button, pattern='^' + 'Change To invest' + '$'),
                 CallbackQueryHandler(back_to_modify_button, pattern='^' + 'Back to Modify Options' + '$'),
-                MessageHandler(Filters.regex('^(([a-zA-Z0-9]{3,6})|([a-zA-Z0-9]{3,6}((\.)|(\-))([a-zA-Z0-9]{1,4})))$'),
+                MessageHandler(Filters.regex('^(([a-zA-Z0-9]{2,16})|([a-zA-Z0-9]{2,16}((\.)|(\-))([a-zA-Z0-9]{1,4})))$'),
                                inline_modify_stock_check),
-                MessageHandler((~ Filters.command), inline_wrong_ticket_edit)
+                MessageHandler((~ Filters.command), inline_wrong_ticket_edit),
+                MessageHandler((~ Filters.regex(not_commands_pattern)), inline_wrong_ticket_edit)
             ],
             # TO_INVEST: [
             #     MessageHandler(Filters.regex('^(([0-9]{1,10}\.[0-9]{1,2})|([0-9]{1,10}))$'), inline_modify_to_invest)
@@ -74,15 +80,17 @@ def setup_dispatcher(dp):
             ],
             ADD_STOCK: [
                 CallbackQueryHandler(back_to_modify_button, pattern='^' + 'Back to Modify Options' + '$'),
-                MessageHandler(Filters.regex('^(([a-zA-Z0-9]{3,6})|([a-zA-Z0-9]{3,6}((\.)|(\-))([a-zA-Z0-9]{1,4})))$'),
+                MessageHandler(Filters.regex('^(([a-zA-Z0-9]{2,16})|([a-zA-Z0-9]{2,16}((\.)|(\-))([a-zA-Z0-9]{1,4})))$'),
                                inline_add_stock_check),
-                MessageHandler((~ Filters.command), inline_wrong_ticket_add)
+                MessageHandler((~ Filters.command), inline_wrong_ticket_add),
+                MessageHandler((~ Filters.regex(not_commands_pattern)), inline_wrong_ticket_add)
             ],
             DELETE_STOCK: [
                 CallbackQueryHandler(back_to_modify_button, pattern='^' + 'Back to Modify Options' + '$'),
-                MessageHandler(Filters.regex('^^(([a-zA-Z0-9]{3,6})|([a-zA-Z0-9]{3,6}((\.)|(\-))([a-zA-Z0-9]{1,4})))$'),
+                MessageHandler(Filters.regex('^(([a-zA-Z0-9]{2,16})|([a-zA-Z0-9]{2,16}((\.)|(\-))([a-zA-Z0-9]{1,4})))$'),
                                inline_delete_stock_check),
-                MessageHandler((~ Filters.command), inline_wrong_ticket_delete)
+                MessageHandler((~ Filters.command), inline_wrong_ticket_delete),
+                MessageHandler((~ Filters.regex(not_commands_pattern)), inline_wrong_ticket_delete)
             ],
             EXACT_DELETE_STOCK: [
                 CallbackQueryHandler(delete_stock_exact_button, pattern='^(Yes|No)$'),
@@ -95,7 +103,7 @@ def setup_dispatcher(dp):
         persistent=True,
         name='portfolio_conversation_persistance',
     )
-    dp.add_handler(portfolio_conv_handler, 2)
+    dp.add_handler(portfolio_conv_handler, 1)
 
     # admin commands
     dp.add_handler(CommandHandler("admin", admin.admin))
@@ -126,6 +134,9 @@ def setup_dispatcher(dp):
     #     # & Filters.forwarded & (Filters.photo | Filters.video | Filters.animation),
     #     <function_handler>,
     # ))
+
+    #dp.add_handler(MessageHandler((Filters.regex(not_commands_pattern) & (Filters.text)), wrong_command_entered), 1)
+    dp.add_handler(MessageHandler((~ Filters.regex(not_commands_pattern)), wrong_command_entered), 1)
 
     return dp
 

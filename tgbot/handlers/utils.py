@@ -2,9 +2,28 @@ import telegram
 from functools import wraps
 from dtb.settings import ENABLE_DECORATOR_LOGGING, TELEGRAM_TOKEN
 from django.utils import timezone
+
+from tgbot.handlers import text_eng, text_ru
 from tgbot.models import UserActionLog, User
 from telegram import MessageEntity
 
+from django.core.cache import cache
+from tgbot import utils
+
+
+def check_language(func):
+    @wraps(func)
+    def command_func(update, context, *args, **kwargs):
+
+        user_id = utils.extract_user_id_from_update(update)
+
+        if cache.get(f'language_{user_id}') == 'ru':
+            language = text_ru
+        else:
+            language = text_eng
+        return func(update, context, language,  *args, **kwargs)
+
+    return command_func
 
 def send_typing_action(func):
     """Sends typing action while processing func command."""

@@ -1,6 +1,6 @@
 import telegram
 
-from tgbot.handlers.static_text import share_location, thanks_for_location
+from tgbot.handlers.text_ru import share_location, thanks_for_location
 from tgbot.models import User, Location
 
 

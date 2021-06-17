@@ -61,6 +61,12 @@ class User(models.Model):
         u.save()
 
     @classmethod
+    def get_user_and_updated_language_code(cls, update, context, language_code):
+        u = cls.get_user(update, context)
+        u.language_code = language_code
+        u.save()
+
+    @classmethod
     def get_user(cls, update, context):
         u, _ = cls.get_user_and_created(update, context)
         return u

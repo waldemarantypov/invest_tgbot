@@ -1,6 +1,7 @@
 version: "3.8"
 
 services:
+
   postgres:
     image: postgres:latest
     container_name: postgres
@@ -12,6 +13,20 @@ services:
       - ./.env
     ports:
       - 5432:5432
+
+  redis:
+    container_name: redis
+    image: redis:alpine
+    restart: always
+    volumes:
+      - redis-data:/data
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    ports:
+      - 6379
+    command:
+      - "--appendonly yes"
+
   web:
     build: .
     container_name: django
@@ -24,6 +39,33 @@ services:
       - ./.env
     depends_on:
       - postgres
+      - redis
+
+  celery:
+    build: .
+    container_name: celery
+    command: celery -A dtb worker --loglevel=INFO
+    volumes:
+      - .:/code
+    env_file:
+      - ./.env
+    depends_on:
+      - redis
+      - web
+
+  celery-beat:
+    build: .
+    container_name: celery_beat
+    command: celery -A dtb beat --loglevel=INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler
+    volumes:
+      - .:/code
+    env_file:
+      - ./.env
+    depends_on:
+      - redis
+      - celery
+      - web
+
   bot:
     build: .
     container_name: tg_bot
@@ -38,3 +80,4 @@ services:
 
 volumes:
   postgres_data:
+  redis-data:

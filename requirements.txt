@@ -26,3 +26,11 @@ python-telegram-bot
 #portfolio
 yfinance
 datetime
+
+django-redis
+redis-server
+
+# Distributed tasks
+celery
+redis
+django-celery-beat

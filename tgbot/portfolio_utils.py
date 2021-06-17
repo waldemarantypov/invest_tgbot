@@ -1,7 +1,7 @@
 from datetime import date
 
-from tgbot.handlers import static_text
-from tgbot.handlers.static_text import to_invest_text, total_portfolio
+from tgbot.handlers import text_ru
+from tgbot.handlers.text_ru import to_invest_text, total_portfolio
 import requests
 
 currency_dict = {}
@@ -57,7 +57,7 @@ def portfolio_output_net(portfolio, stocks):
     # s = str(portfolio.to_invest)
     # output_text = string_format(f, s)
 
-    output_text = static_text.portfolio_head
+    output_text = text_ru.portfolio_head
     c3 = ('–' * 30) + '\n'
     output_text += c3
 
@@ -95,7 +95,7 @@ def portfolio_output_total(portfolio, stocks):
     # s = str(portfolio.to_invest)
     # output_text = string_format(f, s)
 
-    output_text = static_text.portfolio_head
+    output_text = text_ru.portfolio_head
     c3 = ('–' * 30) + '\n'
     output_text += c3
 
@@ -133,7 +133,7 @@ def portfolio_output_costs(portfolio, stocks):
     # s = str(portfolio.to_invest)
     # output_text = string_format(f, s)
 
-    output_text = static_text.portfolio_head
+    output_text = text_ru.portfolio_head
     c3 = ('–' * 30) + '\n'
     output_text += c3
 
@@ -171,7 +171,7 @@ def portfolio_output_amount(portfolio, stocks):
     # s = str(portfolio.to_invest)
     # output_text = string_format(f, s)
 
-    output_text = static_text.portfolio_head
+    output_text = text_ru.portfolio_head
     c3 = ('–' * 30) + '\n'
     output_text += c3
 
@@ -209,7 +209,7 @@ def portfolio_output_efficiency(portfolio, stocks):
     # s = str(portfolio.to_invest)
     # output_text = string_format(f, s)
 
-    output_text = static_text.portfolio_head
+    output_text = text_ru.portfolio_head
     c3 = ('–' * 30) + '\n'
     output_text += c3
 
