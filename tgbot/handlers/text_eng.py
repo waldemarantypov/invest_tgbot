@@ -1,13 +1,13 @@
 # command start
 start_created = "Hello, {first_name}!\n\n"
-start_created_portfolio = '/portfolio to configure your portfolio - \n\n'
+start_created_portfolio = '/portfolio - to configure your portfolio\n\n'
 start_created_feedback = 'If you will have a minute to answer 5 questions - press /feedback\n' \
                          'Your answers will help us to make the bot more useful.\n\n'
 start_created_portfolio_example = "This is how the portfolio will look like:"
 start_created_share = 'You can simply share the bot by sending this message: {share_url}'
 start_created_share_command = 'You can get your unique link to share it with your friends here:' \
                               ' /share'
-start_change_language = '/language to change a bot language: '
+start_change_language = '/language - to change a bot language: '
 start_created_inbaze = 'Ещё у нас есть телеграм канал, где рассказываем про финансовую грамотность: @inbaze'
 
 # OKAY
