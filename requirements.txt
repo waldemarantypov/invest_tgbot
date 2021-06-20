@@ -35,3 +35,4 @@ celery
 redis
 django-celery-beat
 postgres
+text_eng_old.py
