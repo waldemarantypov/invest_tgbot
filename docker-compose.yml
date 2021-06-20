@@ -53,18 +53,18 @@ services:
       - redis
       - web
 
-  celery-beat:
-    build: .
-    container_name: celery_beat
-    command: celery -A dtb beat --loglevel=INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler
-    volumes:
-      - .:/code
-    env_file:
-      - ./.env
-    depends_on:
-      - redis
-      - celery
-      - web
+#  celery-beat:
+#    build: .
+#    container_name: celery_beat
+#    command: celery -A dtb beat --loglevel=INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler
+#    volumes:
+#      - .:/code
+#    env_file:
+#      - ./.env
+#    depends_on:
+#      - redis
+#      - celery
+#      - web
 
   bot:
     build: .

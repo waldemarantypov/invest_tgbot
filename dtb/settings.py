@@ -34,7 +34,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # 3rd party apps
-    'django_celery_beat',
+    # 'django_celery_beat',
 
     # local apps
     'tgbot.apps.TgbotConfig',

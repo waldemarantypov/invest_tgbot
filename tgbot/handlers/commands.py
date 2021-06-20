@@ -55,8 +55,8 @@ def command_start(update, context):
     file = r"tgbot/static/gif/portfolio.mp4"
     file = open(file, 'rb')
 
-    bot = context.bot
-    url = helpers.create_deep_linked_url(bot.username, payload=str(u.user_id), group=False)
+    # bot = context.bot
+    # url = helpers.create_deep_linked_url(bot.username, payload=str(u.user_id), group=False)
 
     # welcome_text_full = welcome_text + static_text.start_created_2nd_string
     # context.bot.sendAnimation(chat_id=update.effective_chat.id, animation=file, caption=welcome_text_full)
