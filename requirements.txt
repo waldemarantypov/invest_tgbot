@@ -34,3 +34,4 @@ redis-server
 celery
 redis
 django-celery-beat
+postgres

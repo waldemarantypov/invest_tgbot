@@ -141,7 +141,7 @@ class Portfolio(models.Model):
 class Stock(models.Model):
     """Every Stocks connected to Portfolio"""
 
-    symbol = models.CharField(max_length=8)
+    symbol = models.CharField(max_length=16)
     shares = models.FloatField(default=0.0)
     regular_price = models.FloatField(default=0.0)
     total_price = models.FloatField(default=0.0)
