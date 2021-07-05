@@ -21,9 +21,10 @@ SECRET_KEY = os.getenv(
 )
 
 DEBUG = not not os.getenv("DJANGO_DEBUG", False)
+# DEBUG = False
 
 ALLOWED_HOSTS = ["*",]  # since Telegram uses a lot of IPs for webhooks
-
+#ALLOWED_HOSTS = ['127.0.0.1', 'inbazedtb.xyz']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -89,12 +90,14 @@ DATABASES = {
 
 REDIS_HOST = os.environ.get('REDIS_HOST', '127.0.0.1')
 REDIS_PORT = os.environ.get('REDIS_PORT', '6379')
+# REDIS_URL = os.getenv('REDIS_URL', 'redis://redis:6379')
 
 CACHES = {
     'default': {
         "BACKEND": 'django_redis.cache.RedisCache',
         "LOCATION": [
             'redis://{}:{}/1'.format(REDIS_HOST, REDIS_PORT),
+            # REDIS_URL,
         ],
         'OPTIONS': {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
